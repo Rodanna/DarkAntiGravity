@@ -1,0 +1,12 @@
+.DS_Store
+*~
+
+*.log
+*.aux
+*.bbl
+*.blg
+*.out
+main.pdf
+
+*.pyc
+__pycache__
