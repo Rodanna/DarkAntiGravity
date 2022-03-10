@@ -20,6 +20,8 @@ a0 = 0.0827129859387924
 a1 = 1
 a = np.linspace(a0,a1,steps)
 
+def scalefactor(z):
+    return 1/(1+z)
 
 def redshift(a):
     z = (1-a)/a
@@ -53,16 +55,16 @@ def luminosity(a):
     return com*(1+z)
     
 
-print(redshift(0.0827129859387924))
-plt.figure()
+'''plt.figure()
 plt.grid(False)
 plt.plot(a,H(a))
 plt.xlabel('scale factor a')
 plt.ylabel('Hubble parameter H')
-plt.show()
+plt.show()'''
 
-print('The comoving distance is:',comoving(a),'cs')
-print('The angular diameter distance is:',angular(a)[0],'cs')
-print('The luminosity distance is:',luminosity(a)[0],'cs')
-print('The light travel distance is:',lighttravel(a),'cs')
+
+#print('The comoving distance is:',comoving(a),'cs')
+#print('The angular diameter distance is:',angular(a)[0],'cs')
+#print('The luminosity distance is:',luminosity(a)[0],'cs')
+#print('The light travel distance is:',lighttravel(a),'cs')
 #print('The lighttravel distance is:',lighttravel(a)*3.171e-17,'Gly')
