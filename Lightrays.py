@@ -11,7 +11,7 @@ import numpy as np
 norm = 5000000000
 def trfun(x,y):
     q = 0.8
-    C= 50000
+    C= 20000
     R = 0.01
     s = 5
     #return cs*x-sn*y, sn*x+cs*y #ROTATION
@@ -19,7 +19,7 @@ def trfun(x,y):
     #return x*np.sqrt(np.abs(1-y**2/2))/100, y*np.sqrt(np.abs(1-x**2/2))/100
     #return x*y/50,y*1.2
     #return 1/(np.sqrt(1-q**2))*np.arctan(np.sqrt(1-q**2)*x/(R+s)), 1/(np.sqrt(1-q**2))*np.arctan(np.sqrt(1-q**2)*y/(R+q**2*s))
-    return 2*x/(1+x**2+q*y**2)*C, 2*q*y/(1+x**2+q*y**2)*C
+    return 2*x/(1+x**2+q*y**2)*C, 2*q*y/(1+x**2+q*y**2)*C+10
 
 
 def display(fname):
