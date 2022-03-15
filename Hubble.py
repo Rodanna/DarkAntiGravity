@@ -58,7 +58,7 @@ u = np.linspace(-nx/2,nx/2,nx)
 v = np.linspace(-ny/2,ny/2,ny)
 X,Y = np.meshgrid(u,v)
 x,y = np.meshgrid(u,v)
-g,x,y = np.empty((nr,nx,ny),float)
+g = np.empty((nr,nx,ny),float)
 x = np.empty((nr,nx,ny),float)
 y = np.empty((nr,nx,ny),float)
 
