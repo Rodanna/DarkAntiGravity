@@ -10,13 +10,10 @@ from scipy.interpolate import RectBivariateSpline
 import Distances
 
 q = 0.8
-C= 60000
-R = 0.1
-s = 50
+C= 100000
 a0 = 1
-aL = 1.5
+aL = 0.6
 steps = 1000
-nr = 8
 
 f = plt.imread('HUBBLE.jpg')
 f = f[:,:,0]
@@ -42,32 +39,21 @@ ff[7][490:570,710:780] = f[490:570,710:780]
 ff[7][730:800,400:450] = f[730:800,400:450]
 
 z = np.array([9,1.8,2,5,2.1,7,6,3,8])
-a,Ds,Dds = z*0,z*0,z*0
-A = np.empty((nr,steps),float)
-B = np.empty((nr,steps),float)
-
-for i in range (0,nr):
-    a[i] = Distances.scalefactor(z[i])
-    A[i] = np.linspace(a[i],a0,steps)
-    B[i] = np.linspace(a[i],aL,steps)
-    Ds[i] = Distances.angular(A[i])[0]
-    Dds[i] = Distances.angular(B[i])[0]
-
-
 u = np.linspace(-nx/2,nx/2,nx)
 v = np.linspace(-ny/2,ny/2,ny)
 X,Y = np.meshgrid(u,v)
-x,y = np.meshgrid(u,v)
-g = np.empty((nr,nx,ny),float)
-x = np.empty((nr,nx,ny),float)
-y = np.empty((nr,nx,ny),float)
 
 
-for i in range (0,nr):
-    x[i],y[i] = X-(Ds[i]/Dds[i])*2*X/(1+X**2+q*Y**2)*C, Y-(Ds[i]/Dds[i])*2*q*Y/(1+X**2+q*Y**2)*C
+for i in range (0,len(ff)):
+    a = Distances.scalefactor(z[i])
+    A = np.linspace(a,a0,steps)
+    B = np.linspace(a,aL,steps)
+    Ds = Distances.angular(A)[0]
+    Dds = Distances.angular(B)[0]    
+    x,y = X-(Ds/Dds)*2*X/(1+X**2+q*Y**2)*C, Y-(Ds/Dds)*2*q*Y/(1+X**2+q*Y**2)*C
     spline = RectBivariateSpline(X[0,:],Y[:,0],ff[i].T)
-    g[i] = spline.ev(x[i],y[i])
+    g = spline.ev(x,y)
     plt.imshow(ff[i])
     plt.show()
-    plt.imshow(g[i])
+    plt.imshow(g)
     plt.show()
