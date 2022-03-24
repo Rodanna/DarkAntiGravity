@@ -12,7 +12,7 @@ steps = 1000
 G = 6.67e-11 # m**3/(kg s**2)
 c = 300000000 # m/s
 M = 5e14*2e30 # kg
-beta = 25
+beta = 5
 
 zS = 1.41 #redshift of Q0957+561
 aS = Distances.scalefactor(zS)
