@@ -23,13 +23,13 @@ def bisection(x,v,tol):
     elif np.sign(special.jv(v,b)) == np.sign(special.jv(v,m)):
         return bisection(x[0:y],v,tol) # m closer than b
 
-v = np.arange(0,6)
-x = np.linspace(0,65,1000)
+v = np.arange(0,20)
+x = np.linspace(5,18,1000)
 nrroots = 100
 
 plt.figure()
 plt.grid(True)
-for i in range (2,3):
+for i in range (0,len(v)):
     plt.plot(x,special.jv(v[i],x)) #bessel functions of first order
 plt.show()
 
@@ -56,7 +56,7 @@ for n in range(0,nrroots):
         r1 = bisection(np.linspace(xmin[0][n],x[-1],1000),v[0],0.001)
         if r1 != 999:
             m[0] += 1
-print(m[0])
+print('J 0 has',m[0],'roots')
 
 
 for k in range(1,len(v)):
@@ -73,5 +73,5 @@ for k in range(1,len(v)):
             r1 = bisection(np.linspace(xmin[k][n],x[-1],1000),v[k],0.01)
             if r1 != 999:
                 m[k] += 1
-    print(m[k])
+    print('J',k,'has',m[k],'roots')
     
