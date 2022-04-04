@@ -77,6 +77,7 @@ for k in range(1,len(v)):
 
 rel = np.argpartition(m,-10)[-10:]   #gives the indeces corresponding to the largest elements
 
+lyst = []
                 
 for k in rel:
     roots = np.array([])
@@ -98,5 +99,30 @@ for k in rel:
                 roots = np.append(roots,r2)
     if k == 0:
         print('The zeros of the',0,'th. Bessel function are',roots0)
+        for xr in roots0:
+            lyst.append((0,xr))
     elif k != 0:
         print('The zeros of the',k,'th. Bessel function are',roots)
+        for xr in roots:
+            lyst.append((k,xr))
+            
+lyst.sort(key = lambda v: v[1])            
+print('Here comes the long list!')
+print(lyst)
+k = [v[0] for v in lyst]
+xr = [v[1] for v in lyst]
+plt.plot(k,xr,'.')
+plt.show()
+
+u = np.linspace(-1,1,256)
+x,y = np.meshgrid(u,u)
+r = (x*x + y*y)**.5
+phi = np.arctan2(y,x)
+for v in lyst:
+    m = v[0]
+    km = v[1]
+    z = special.jv(m,km*r) * np.cos(m*phi)
+    plt.clf()
+    plt.gca().set_aspect('equal')
+    plt.contourf(x,y,z,cmap='RdYlGn')
+    plt.pause(0.5)
