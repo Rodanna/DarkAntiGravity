@@ -8,13 +8,35 @@ Created on Thu Mar 24 14:35:03 2022
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy import special
+import scipy.integrate as integrate
+
+rmax = 1
+mass = 100
+
+'''
+da = (a1-a0)/steps
+INT = 0
+for i in range (0,steps):
+    INT += 1/(a[i]**2*H(a[i]))*da # cs
+return INT'''
 
 nr, root = np.loadtxt('roots.txt', unpack=True)
 a = np.ones(len(nr),float)
 b = np.ones(len(nr),float)
 
-rmax = 1
-mass = 100
+   
+for m in nr:
+    i = 0
+    if m != 0:
+        N = rmax**2*np.pi/2*(special.jv(m+1,root[i]))**2
+        B = integrate.quad(lambda x: x*special.jv(m,x*root[i]/rmax), 0, rmax)[0] #mass distribution missing
+        C = integrate.quad(lambda x: np.cos(m*x),0,2*np.pi)[0]
+        print(B)
+        a[i] = 1/N*B*C
+    else: 
+        a[i] = rmax**2*np.pi*special.jv(1,root[i])**2
+    i += 1
+
 
 u = np.linspace(-1,1,256)
 X,Y = np.meshgrid(u,u)
