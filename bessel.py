@@ -65,7 +65,7 @@ print('J 0 has',m[0],'roots')
 
 for k in range(1,len(v)):
     for n in range(0,nrroots):
-        xmin[k][n] = xmin[k-1][n]+ 1  # should it be pi?
+        xmin[k][n] = xmin[k-1][n]+ 1  
         xmax[k][n] = xmax[k-1][n]+ np.pi/2
         if xmin[k][n] >= x[0] and xmax[k][n] <= x[-1]:
             mi = (xmax[k][n] + xmin[k][n])/2
@@ -85,14 +85,14 @@ for k in range(1,len(v)):
                 m[k] += 1
     print('J',k,'has',m[k],'roots')
 
-rel = np.argpartition(m,-50)[-50:]   #gives the indeces corresponding to the largest elements
+rel = np.argpartition(m,-15)[-15:]   #gives the indeces corresponding to the largest elements
 
 lyst = []
                 
 for k in rel:
     roots = np.array([])
     for n in range(0,nrroots):
-        xmin[k][n] = xmin[k-1][n]+ 1  # should it be pi?
+        xmin[k][n] = xmin[k-1][n]+ 1 
         xmax[k][n] = xmax[k-1][n]+ np.pi/2
         if xmin[k][n] >= x[0] and xmax[k][n] <= x[-1]:  
             m = (xmax[k][n] + xmin[k][n])/2
@@ -106,7 +106,6 @@ for k in rel:
             r1 = bisection(np.linspace(x[0],xmax[k][n],1000),v[k],0.01)
             if r1 != 999:
                 roots = np.append(roots,r1)
-                 #roots = np.append(roots[k],r1)
         elif xmin[k][n] <= x[-1] and xmax[k][n] >= x[-1]:
             r2 = bisection(np.linspace(xmin[k][n],x[-1],1000),v[k],0.01)
             if r2 != 999:
@@ -117,34 +116,15 @@ for k in rel:
     elif k != 0:
         for xr in roots:
             lyst.append((k,round(xr,2)))
-        print('The zeros of the',0,'th. Bessel function are',roots0)
-        for xr in roots0:
-            lyst.append((0,xr))
-    elif k != 0:
-        print('The zeros of the',k,'th. Bessel function are',roots)
-        for xr in roots:
-            lyst.append((k,xr))
-
+   
+        
             
 lyst.sort(key = lambda v: v[1])            
 print('Here comes the long list!')
 print(lyst)
+np.savetxt('roots.txt', lyst, fmt="%.3f", header="nr  root")
+
 k = [v[0] for v in lyst]
 xr = [v[1] for v in lyst]
 plt.plot(k,xr,'.')
 plt.show()
-
-
-'''
-u = np.linspace(-1,1,256)
-x,y = np.meshgrid(u,u)
-r = (x*x + y*y)**.5
-phi = np.arctan2(y,x)
-for v in lyst:
-    m = v[0]
-    km = v[1]
-    z = special.jv(m,km*r) * np.cos(m*phi)
-    plt.clf()
-    plt.gca().set_aspect('equal')
-    plt.contourf(x,y,z,cmap='RdYlGn')
-    plt.pause(0.5)'''
