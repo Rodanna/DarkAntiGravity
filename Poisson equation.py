@@ -38,7 +38,7 @@ b = np.ones(len(nr),float)
 Ba,Bb = 0,0
 area = 4*rmax**2/(256*256)
 for m in range(0,len(nr)): #coefficients of Fourier Bessel series
-    Na = rmax**2*np.pi/2*(special.jv(nr[m],root[m]))**2
+    Na = rmax**2*np.pi/2*(special.jv(nr[m],root[m]))**2/m
     N0 = rmax**2*np.pi*special.jv(1,root[m])**2
     for k in range(0,9):
         Ba +=  area*pr[k]*mass[k]*special.jv(nr[m],root[m]*pr[k]/rmax)*np.cos(nr[m]*pphi[k])
