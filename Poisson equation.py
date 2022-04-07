@@ -38,7 +38,8 @@ b = np.ones(len(nr),float)
 Ba,Bb = 0,0
 area = 4*rmax**2/(256*256)
 for m in range(0,len(nr)): #coefficients of Fourier Bessel series
-    Na = rmax**2*np.pi/2*(special.jv(nr[m],root[m]))**2/m
+    if m != 0:
+        Na = rmax**2*np.pi/2*(special.jv(nr[m],root[m]))**2/m
     N0 = rmax**2*np.pi*special.jv(1,root[m])**2
     for k in range(0,9):
         Ba +=  area*pr[k]*mass[k]*special.jv(nr[m],root[m]*pr[k]/rmax)*np.cos(nr[m]*pphi[k])
@@ -58,40 +59,14 @@ plt.clf()
 plt.gca().set_aspect('equal')
 plt.contourf(X,Y,z,cmap='RdYlBu')
 
-    
+def gradient(r,phi):
+    rgrad = 0
+    phigrad = 0
+    for M in range(0,len(nr)):
+        rgrad += (a[M]*np.sin(nr[M]*phi) + b[M]*np.cos(nr[M]*phi))*(r*root[M]/rmax)*special.jvp(nr[M],r*root[M]/rmax,n=1)
+        phigrad += a[M]*nr[M]*np.cos(nr[M]*phi) - b[M]*nr[M]*np.sin(nr[M]*phi)*(r*root[M]/rmax)*special.jv(nr[M],r*root[M]/rmax)/r
+    return rgrad,phigrad    
 
-#printing all Bessel functions individually
-'''
-for i in range(0,len(nr)):
-    m = nr[i]
-    km = root[i]
-    z = special.jv(nr[i],root[i]*r/rmax) * (a[i]*np.cos(nr[i]*phi)+b[i]*np.sin(nr[i]*phi))
-    plt.clf()
-    plt.gca().set_aspect('equal')
-    plt.contourf(X,Y,z,cmap='RdYlBu')
-    plt.pause(0.5)'''
-
-
-'''def laplace(x,y):
-    psi = 0
-    r = np.sqrt(x**2+y**2)
-    phi = np.arctan2(y,x)
-    for M in range(0,len(number)):
-        psi += (a[M]*np.sin(M*phi)+ b[M]*np.cos(M*phi))*(root[M]/rmax)**2*(special.jvp(number[M],r*root[M]/rmax,n=2)+(rmax/r*alpha[M]))*special.jvp(number[M],r*root[M]/rmax,n=1)
-        psi += a[M]*M*np.cos(M*phi) - b[M]*M*np.sin(M*phi)*special.jv(number[M],r*root[M]/rmax)/r
-    return psi
-
-def gradient(x,y):
-    xgrad = 0
-    ygrad = 0
-    r = np.sqrt(x**2+y**2)
-    phi = np.arctan2(y,x)
-    for M in range(0,len(number)):
-        xgrad += (a[M]*np.sin(M*phi) + b[M]*np.cos(M*phi))*(r*root[M]/rmax)*special.jvp(number[M],r*root[M]/rmax,n=1)
-        ygrad += a[M]*M*np.cos(M*phi) - b[M]*M*np.sin(M*phi)*(r*root[M]/rmax)*special.jv(number[M],r*root[M]/rmax)/r
-    return xgrad,ygrad
-
-Ca = integrate.quad(lambda x: np.cos(m*x),0,2*np.pi)[0]
-Cb = integrate.quad(lambda x: np.sin(m*x),0,2*np.pi)[0]
-    '''
-
+plt.figure()
+plt.quiver(X,Y,gradient(r,phi)[0]*X/r-gradient(r,phi)[1]*Y/r,gradient(r,phi)[0]*Y/r+gradient(r,phi)[1]*X/r)
+plt.show()
