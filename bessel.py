@@ -65,7 +65,7 @@ print('J 0 has',m[0],'roots')
 
 for k in range(1,len(v)):
     for n in range(0,nrroots):
-        xmin[k][n] = xmin[k-1][n]+ 1  
+        xmin[k][n] = xmin[k-1][n] +1
         xmax[k][n] = xmax[k-1][n]+ np.pi/2
         if xmin[k][n] >= x[0] and xmax[k][n] <= x[-1]:
             mi = (xmax[k][n] + xmin[k][n])/2
@@ -92,7 +92,7 @@ lyst = []
 for k in rel:
     roots = np.array([])
     for n in range(0,nrroots):
-        xmin[k][n] = xmin[k-1][n]+ 1 
+        xmin[k][n] = xmin[k-1][n] - 2.5
         xmax[k][n] = xmax[k-1][n]+ np.pi/2
         if xmin[k][n] >= x[0] and xmax[k][n] <= x[-1]:  
             m = (xmax[k][n] + xmin[k][n])/2
