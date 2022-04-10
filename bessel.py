@@ -28,7 +28,7 @@ def bisection(x,v,tol):
         return bisection(x[0:y],v,tol) # m closer than b
 
 v = np.arange(0,50)
-x = np.linspace(1,50,1000)
+x = np.linspace(1,100,1000)
 nrroots = 200
 
 plt.figure()
@@ -65,7 +65,7 @@ print('J 0 has',m[0],'roots')
 
 for k in range(1,len(v)):
     for n in range(0,nrroots):
-        xmin[k][n] = xmin[k-1][n] +1
+        xmin[k][n] = xmin[k-1][n] + 1
         xmax[k][n] = xmax[k-1][n]+ np.pi/2
         if xmin[k][n] >= x[0] and xmax[k][n] <= x[-1]:
             mi = (xmax[k][n] + xmin[k][n])/2
@@ -85,14 +85,14 @@ for k in range(1,len(v)):
                 m[k] += 1
     print('J',k,'has',m[k],'roots')
 
-rel = np.argpartition(m,-15)[-15:]   #gives the indeces corresponding to the largest elements
+rel = np.argpartition(m,-30)[-30:]   #gives the indeces corresponding to the largest elements
 
 lyst = []
                 
 for k in rel:
     roots = np.array([])
     for n in range(0,nrroots):
-        xmin[k][n] = xmin[k-1][n] - 2.5
+        xmin[k][n] = xmin[k-1][n] + 1
         xmax[k][n] = xmax[k-1][n]+ np.pi/2
         if xmin[k][n] >= x[0] and xmax[k][n] <= x[-1]:  
             m = (xmax[k][n] + xmin[k][n])/2
