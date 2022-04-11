@@ -26,38 +26,60 @@ pphi = np.arctan2(p2,p1)
 for index in range(0,9):
     rho[p1[index]][p2[index]] = mass[index] 
 
-plt.figure()
-plt.imshow(rho)
-plt.show()
+#plt.figure()
+#plt.imshow(rho)
+#plt.show()
 
 nr, root = np.loadtxt('roots.txt', unpack=True) #import bessel roots
+nr = nr[:30]
+root = root[:30]
 a = np.ones(len(nr),float)
 b = np.ones(len(nr),float)
+nr = [round(m) for m in nr]
+print(nr,root)
 
+m = nr[23]
+alpha = root[23]
+dens = special.jv(m,alpha/rmax*r)*np.cos(m*phi)
+dens[r > rmax] = 0
  
 Ba,Bb = 0,0
 area = 4*rmax**2/(256*256)
-for m in range(0,len(nr)): #coefficients of Fourier Bessel series
+for n in range(0,len(nr)): #coefficients of Fourier Bessel series
+    m = nr[n]
+    alpha = root[n]
+    Na = rmax**2*np.pi/2*(special.jv(m+1,alpha))**2
+    if m == 0:
+        N0 = Na*2
+    bess = special.jv(m,alpha/rmax*r)
+    fnc = bess*np.cos(m*phi)
+    fns = bess*np.sin(m*phi)
+    Ba = area * np.sum(dens*fnc)
+    Bb = area * np.sum(dens*fns)
+#    for k in range(0,9):
+#        Ba +=  area*pr[k]*mass[k]*special.jv(m,alpha*pr[k]/rmax)*np.cos(m*pphi[k])
+#        Bb +=  area*pr[k]*mass[k]*special.jv(m,alpha*pr[k]/rmax)*np.sin(m*pphi[k])
     if m != 0:
-        Na = rmax**2*np.pi/2*(special.jv(nr[m],root[m]))**2/m
-    N0 = rmax**2*np.pi*special.jv(1,root[m])**2
-    for k in range(0,9):
-        Ba +=  area*pr[k]*mass[k]*special.jv(nr[m],root[m]*pr[k]/rmax)*np.cos(nr[m]*pphi[k])
-        Bb +=  area*pr[k]*mass[k]*special.jv(nr[m],root[m]*pr[k]/rmax)*np.sin(nr[m]*pphi[k])
-    if m != 0:
-        a[m] = Ba/Na
-        b[m] = Bb/Na
+        a[n] = Ba/Na
+        b[n] = Bb/Na
     else: 
-        a[m] = Ba/N0
+        a[n] = Ba/N0
         b[m] = Bb/N0
 
 
 for i in range(0,len(nr)): #Fourier Bessel series with coefficients
-    z += special.jv(nr[i],root[i]*r/rmax)*(a[i]*np.cos(nr[i]*phi)+b[i]*np.sin(nr[i]*phi))
+    m = nr[i]
+    alpha = root[i]
+    angpart = a[i]*np.cos(m*phi)
+    if m > 0:
+        angpart += b[i]*np.sin(m*phi)
+    z += special.jv(m,alpha*r/rmax)*angpart
+    z[r > rmax] = 0
 
 plt.clf()
 plt.gca().set_aspect('equal')
 plt.contourf(X,Y,z,cmap='RdYlBu')
+plt.colorbar()
 
 def gradient(r,phi):
     rgrad = 0
