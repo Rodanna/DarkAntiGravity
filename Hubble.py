@@ -9,15 +9,18 @@ import matplotlib.pyplot as plt
 from scipy.interpolate import RectBivariateSpline
 import Distances
 
+
 q = 0.8
 C= 100000
 a0 = 1
 aL = 0.6
 steps = 1000
 
+
 f = plt.imread('HUBBLE.jpg')
-f = f[:,:,0]
+f = f[:,:,0]/5
 ny,nx = f.shape
+print(f.shape)
 plt.imshow(f)
 plt.show()
 
@@ -42,6 +45,11 @@ z = np.array([9,1.8,2,5,2.1,7,6,3,8])
 u = np.linspace(-nx/2,nx/2,nx)
 v = np.linspace(-ny/2,ny/2,ny)
 X,Y = np.meshgrid(u,v)
+Xgrad = 2*X/(1+X**2+q*Y**2)*C
+Ygrad = 2*q*Y/(1+X**2+q*Y**2)*C
+rgrad = np.loadtxt('rgrad.txt', unpack=True)
+phigrad = np.loadtxt('phigrad.txt', unpack = True)
+
 
 
 for i in range (0,len(ff)):
@@ -50,7 +58,7 @@ for i in range (0,len(ff)):
     B = np.linspace(a,aL,steps)
     Ds = Distances.angular(A)[0]
     Dds = Distances.angular(B)[0]    
-    x,y = X-(Ds/Dds)*2*X/(1+X**2+q*Y**2)*C, Y-(Ds/Dds)*2*q*Y/(1+X**2+q*Y**2)*C
+    x,y = X-(Ds/Dds)*Xgrad, Y-(Ds/Dds)*Ygrad
     spline = RectBivariateSpline(X[0,:],Y[:,0],ff[i].T)
     g = spline.ev(x,y)
     plt.imshow(ff[i])
