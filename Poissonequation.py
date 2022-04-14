@@ -21,8 +21,8 @@ rho = np.zeros((len(X),len(Y)),float)  #point mass distribution
 mass = np.array([100,90,50,34,57,31,64,87,11])*100
 p1 = np.array([180,150,110,120,150,89,178,120,130])
 p2 = np.array([130,120,120,-155,90,75,90,170,160])
-for index in range(0,9):
-    rho[p1[index]][p2[index]] = mass[index] 
+for i in range(0,9):
+    rho[p1[i]][p2[i]] = mass[i] 
 
 plt.figure()
 plt.imshow(rho)
@@ -74,10 +74,13 @@ plt.colorbar()
 
 rgrad = 0
 phigrad = 0
-for M in range(0,len(nr)):
-    rgrad += (a[M]*np.sin(nr[M]*phi) + b[M]*np.cos(nr[M]*phi))*(r*root[M]/rmax)*special.jvp(nr[M],r*root[M]/rmax,n=1)
-    phigrad += a[M]*nr[M]*np.cos(nr[M]*phi) - b[M]*nr[M]*np.sin(nr[M]*phi)*(r*root[M]/rmax)*special.jv(nr[M],r*root[M]/rmax)/r
-   
+
+for i in range(0,len(nr)):
+    m = nr[i]
+    alpha = root[i]
+    rgrad += (b[i]*np.sin(m*phi) + a[i]*np.cos(m*phi))*(alpha/rmax)*special.jvp(m,r*alpha/rmax,n=1)
+    phigrad += (b[i]*m*np.cos(m*phi) - a[i]*m*np.sin(m*phi))*special.jv(m,r*alpha/rmax)/r
+
 np.savetxt('rgrad.txt',rgrad)
 np.savetxt('phigrad.txt',phigrad)
 
