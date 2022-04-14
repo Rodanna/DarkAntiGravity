@@ -29,13 +29,13 @@ def bisection(x,v,tol):
 
 v = np.arange(0,50)
 x = np.linspace(1,100,1000)
-nrroots = 200
+nrroots = 32
 
-plt.figure()
+'''plt.figure()
 plt.grid(True)
 for i in range (0,len(v)):
     plt.plot(x,special.jv(v[i],x)) #bessel functions of first order
-plt.show()
+plt.show()'''
 
 m = np.zeros(len(v))
 xmin = np.empty((len(v),nrroots),float)
@@ -60,40 +60,19 @@ for n in range(0,nrroots):
         if r2 != 999:
             m[0] += 1
             roots0 = np.append(roots0,r2)
-print('J 0 has',m[0],'roots')
-
-
-for k in range(1,len(v)):
-    for n in range(0,nrroots):
-        xmin[k][n] = xmin[k-1][n] + 1
-        xmax[k][n] = xmax[k-1][n]+ np.pi/2
-        if xmin[k][n] >= x[0] and xmax[k][n] <= x[-1]:
-            mi = (xmax[k][n] + xmin[k][n])/2
-            rr = bisection(np.linspace(xmin[k][n],mi,1000),v[k],0.01)
-            r = bisection(np.linspace(mi,xmax[k][n],1000),v[k],0.01)
-            if r != 999:
-                m[k] += 1
-            elif rr != 999:
-                m[k] += 1            
-        elif xmin[k][n] <= x[0] and xmax[k][n] >= x[0]:
-            r1 = bisection(np.linspace(x[0],xmax[k][n],1000),v[k],0.01)
-            if r1 != 999:
-                m[k] += 1
-        elif xmin[k][n] <= x[-1] and xmax[k][n] >= x[-1]:
-            r1 = bisection(np.linspace(xmin[k][n],x[-1],1000),v[k],0.01)
-            if r1 != 999:
-                m[k] += 1
-    print('J',k,'has',m[k],'roots')
-
-rel = np.argpartition(m,-30)[-30:]   #gives the indeces corresponding to the largest elements
+#print('J 0 has',m[0],'roots')
 
 lyst = []
-                
-for k in rel:
-    roots = np.array([])
+
+for k in v:
+    roots = np.array([[]])
     for n in range(0,nrroots):
-        xmin[k][n] = xmin[k-1][n] + 1
-        xmax[k][n] = xmax[k-1][n]+ np.pi/2
+        if k == 1 and n < len(roots0):
+            xmin[k][n] = roots0[n] + 1
+            xmax[k][n] = roots0[n] + np.pi/2
+        else:
+            xmin[k][n] = xmin[k-1][n] + 1
+            xmax[k][n] = xmax[k-1][n]+ np.pi/2
         if xmin[k][n] >= x[0] and xmax[k][n] <= x[-1]:  
             m = (xmax[k][n] + xmin[k][n])/2
             rr = bisection(np.linspace(xmin[k][n],m,1000),v[k],0.01)
@@ -116,12 +95,11 @@ for k in rel:
     elif k != 0:
         for xr in roots:
             lyst.append((k,round(xr,2)))
-   
-        
+
             
 lyst.sort(key = lambda v: v[1])            
-print('Here comes the long list!')
-print(lyst)
+#print('Here comes the long list!')
+#print(lyst)
 np.savetxt('roots.txt', lyst, fmt="%.3f", header="nr  root")
 
 k = [v[0] for v in lyst]
