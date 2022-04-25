@@ -16,14 +16,11 @@ a0 = 1
 aL = 0.6
 steps = 1000
 
-
 f = plt.imread('HUBBLE.jpg')
 f = f[:,:,0]
 ny,nx = f.shape
 plt.imshow(f)
 plt.show()
-
-
 
 ff = np.empty((8,nx,ny),float)
 ff[0][980:1050,970:1050] = f[980:1050,970:1050]
@@ -50,7 +47,6 @@ phi = np.arctan2(Y,X)
 
 Xgrad = 2*X/(1+X**2+q*Y**2)*C #analytic functions
 Ygrad = 2*q*Y/(1+X**2+q*Y**2)*C
-
 
 for i in range (0,len(ff)):
     a = Distances.scalefactor(z[i])
