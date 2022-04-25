@@ -9,45 +9,61 @@ import matplotlib.pyplot as plt
 from scipy.interpolate import RectBivariateSpline
 import Distances
 
+def poten_x(x,y,a):
+    xm, xp, ym, yp = x - a/2, x + a/2, y - a/2, y + a/2
+    val = xm*np.arctan(ym/xm) + xp*np.arctan(yp/xp) \
+        - xm*np.arctan(yp/xm) - xp*np.arctan(ym/xp) \
+        + ym*np.log(xm*xm + ym*ym)/2 + yp*np.log(xp*xp + yp*yp)/2 \
+        - ym*np.log(xp*xp + ym*ym)/2 - yp*np.log(xm*xm + yp*yp)/2
+    return val/np.pi
+
+def poten_y(x,y,a):
+    xm, xp, ym, yp = x - a/2, x + a/2, y - a/2, y + a/2
+    val = ym*np.arctan(xm/ym) + yp*np.arctan(xp/yp) \
+        - ym*np.arctan(xp/ym) - yp*np.arctan(xm/yp) \
+        + xm*np.log(xm*xm + ym*ym)/2 + xp*np.log(xp*xp + yp*yp)/2 \
+        - xm*np.log(xm*xm + yp*yp)/2 - xp*np.log(xp*xp + ym*ym)/2
+    return val/np.pi
 
 a0 = 1
 aL = 0.6
 steps = 1000
 
-f = plt.imread('HUBBLE.jpg')/256
-f = f[:,:,0]
+f = plt.imread('monsters.png')/256
+f = f[-257:-1,:256,0]
 ny,nx = f.shape
 plt.imshow(f)
 plt.show()
 
-ff = np.empty((8,nx,ny),float)
-''''ff[0][90:100,110:120] = f[90:100,110:120]'''
-
-ff[0][512:562,720:760] = f[512:562,720:760]
-ff[1][612:662,730:768] = f[612:662,730:768]
-ff[2][690:720,512:530] = f[690:720,512:530]
-ff[3][620:672,652:680] = f[620:672,652:680]
-ff[4][720:750,610:640] = f[720:750,610:640]
-
+ff = np.empty((4,nx,ny),float)
+ff[0][100:105,30:35] = f[100:105,30:35]
+ff[1][130:135,130:135] = f[130:135,130:135]
+ff[2][100:110,90:100] = f[100:110,90:100]
+ff[3][50:80,130:150] = f[50:80,130:150]
 
 z = np.array([9,1.8,2,5,2.1,7,6,3,8])
 u = np.linspace(-nx/2,nx/2,nx)
 v = np.linspace(-ny/2,ny/2,ny)
 X,Y = np.meshgrid(u,v)
 Xgrad, Ygrad = np.zeros_like(X), np.zeros_like(Y)
-#r = np.sqrt(X**2+Y**2)
-#phi = np.arctan2(Y,X)
-r = np.sqrt(X[512:768,512:768]**2+Y[512:768,512:768]**2)
-phi = np.arctan2(Y[512:768,512:768],X[512:768,512:768])
+
+
+r = np.sqrt(X**2+Y**2)
+phi = np.arctan2(Y,X)
+#r = np.sqrt(X[512:768,512:768]**2+Y[512:768,512:768]**2)
+#phi = np.arctan2(Y[512:768,512:768],X[512:768,512:768])
 
 rgrad = np.loadtxt('rgrad.txt', unpack=True)*10
 phigrad = np.loadtxt('phigrad.txt', unpack = True)*10
 
-Xgrad[512:768,512:768] = rgrad*Y[512:768,512:768]/r+phigrad*X[512:768,512:768]/r #1280 pixel image
-Ygrad[512:768,512:768] = rgrad*Y[512:768,512:768]/r+phigrad*X[512:768,512:768]/r
+#Xgrad[512:768,512:768] = rgrad*X[512:768,512:768]/r-phigrad*Y[512:768,512:768]/r #1280 pixel image
+#Ygrad[512:768,512:768] = rgrad*Y[512:768,512:768]/r+phigrad*X[512:768,512:768]/r
 
-#Xgrad = rgrad*Y/r+phigrad*X/r #256 pixel
-#Ygrad = rgrad*Y/r+phigrad*X/r
+Xgrad = (rgrad*X/r-phigrad*Y/r)*1 #256 pixel
+Ygrad = (rgrad*Y/r+phigrad*X/r)*1
+
+#Xgrad = poten_x(X,Y,50)*5
+#Ygrad = poten_y(X,Y,50)*5
 
 for i in range (0,len(ff)):
     a = Distances.scalefactor(z[i])
