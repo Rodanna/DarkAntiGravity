@@ -39,7 +39,7 @@ ff = np.empty((4,nx,ny),float)
 ff[0][100:105,30:35] = f[100:105,30:35]
 ff[1][130:135,130:135] = f[130:135,130:135]
 ff[2][100:110,90:100] = f[100:110,90:100]
-ff[3][50:80,130:150] = f[50:80,130:150]
+ff[3][55:60,140:145] = f[55:60,140:145]
 
 z = np.array([9,1.8,2,5,2.1,7,6,3,8])
 u = np.linspace(-nx/2,nx/2,nx)
@@ -53,17 +53,17 @@ phi = np.arctan2(Y,X)
 #r = np.sqrt(X[512:768,512:768]**2+Y[512:768,512:768]**2)
 #phi = np.arctan2(Y[512:768,512:768],X[512:768,512:768])
 
-rgrad = np.loadtxt('rgrad.txt', unpack=True)*10
-phigrad = np.loadtxt('phigrad.txt', unpack = True)*10
+rgrad = np.loadtxt('rgrad.txt', unpack=True)
+phigrad = np.loadtxt('phigrad.txt', unpack = True)
+
+Xgrad = (rgrad*X/r-phigrad*Y/r)*5 #256 pixel
+Ygrad = (rgrad*Y/r+phigrad*X/r)*5
 
 #Xgrad[512:768,512:768] = rgrad*X[512:768,512:768]/r-phigrad*Y[512:768,512:768]/r #1280 pixel image
 #Ygrad[512:768,512:768] = rgrad*Y[512:768,512:768]/r+phigrad*X[512:768,512:768]/r
+Xgrad = poten_x(X,Y,50)*5 #analytical potential
+Ygrad = poten_y(X,Y,50)*5
 
-Xgrad = (rgrad*X/r-phigrad*Y/r)*1 #256 pixel
-Ygrad = (rgrad*Y/r+phigrad*X/r)*1
-
-#Xgrad = poten_x(X,Y,50)*5
-#Ygrad = poten_y(X,Y,50)*5
 
 for i in range (0,len(ff)):
     a = Distances.scalefactor(z[i])
