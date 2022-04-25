@@ -27,9 +27,9 @@ def bisection(x,v,tol):
     elif np.sign(special.jv(v,b)) == np.sign(special.jv(v,m)):
         return bisection(x[0:y],v,tol) # m closer than b
 
-v = np.arange(0,50)
-x = np.linspace(1,100,1000)
-nrroots = 32
+v = np.arange(0,70)
+x = np.linspace(1,150,1000)
+nrroots = 300
 
 plt.figure()
 plt.grid(True)
@@ -76,7 +76,7 @@ for k in v:
             xmax[k][n] = root[k-1][n]+ np.pi/2
         if xmin[k][n] >= x[0] and xmax[k][n] <= x[-1]:  
             m = (xmax[k][n] + xmin[k][n])/2
-            rr = bisection(np.linspace(xmin[k][n],m,10000),v[k],0.001)
+            rr = bisection(np.linspace(xmin[k][n],m,10000),v[k],0.0001)
             r = bisection(np.linspace(m,xmax[k][n],10000),v[k],0.001)
             if r != 999:
                 roots = np.append(roots,r)
@@ -85,12 +85,12 @@ for k in v:
                 roots = np.append(roots,rr)
                 root[k][n] = rr
         elif xmin[k][n] <= x[0] and xmax[k][n] >= x[0]:
-            r1 = bisection(np.linspace(x[0],xmax[k][n],10000),v[k],0.001)
+            r1 = bisection(np.linspace(x[0],xmax[k][n],10000),v[k],0.0001)
             if r1 != 999:
                 roots = np.append(roots,r1)
                 root[k][n] = r1
         elif xmin[k][n] <= x[-1] and xmax[k][n] >= x[-1]:
-            r2 = bisection(np.linspace(xmin[k][n],x[-1],10000),v[k],0.001)
+            r2 = bisection(np.linspace(xmin[k][n],x[-1],10000),v[k],0.0001)
             if r2 != 999:
                 roots = np.append(roots,r2)
                 root[k][n] = r2
