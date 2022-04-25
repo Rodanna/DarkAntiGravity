@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
 def poten(x,y,a):
     xm, xp, ym, yp = x - a/2, x + a/2, y - a/2, y + a/2
@@ -20,8 +21,7 @@ def poten_x(x,y,a):
         + ym*np.log(xm*xm + ym*ym)/2 + yp*np.log(xp*xp + yp*yp)/2 \
         - ym*np.log(xp*xp + ym*ym)/2 - yp*np.log(xm*xm + yp*yp)/2
     return val/np.pi;
-    
-    
+       
 def poten_y(x,y,a):
     xm, xp, ym, yp = x - a/2, x + a/2, y - a/2, y + a/2
     val = ym*np.arctan(xm/ym) + yp*np.arctan(xp/yp) \
@@ -30,30 +30,31 @@ def poten_y(x,y,a):
         - xm*np.log(xm*xm + yp*yp)/2 - xp*np.log(xp*xp + ym*ym)/2
     return val/np.pi;
     
-def poten_xx(x,y,a):
-    xm, xp, ym, yp = x - a/2, x + a/2, y - a/2, y + a/2
-    val = np.arctan(yp/xp) + np.arctan(ym/xm) - np.arctan(yp/xm) - np.arctan(ym/xp)
-    return val/np.pi
-    
-def poten_yy(x,y,a):
-    xm, xp, ym, yp = x - a/2, x + a/2, y - a/2, y + a/2
-    val = np.arctan(xp/yp) + np.arctan(xm/ym) - np.arctan(xp/ym) - np.arctan(xm/yp)
-    return val/np.pi
-    
-def poten_xy(x,y,a):
-    xm, xp, ym, yp = x - a/2, x + a/2, y - a/2, y + a/2
-    val = np.log(xp*xp+yp*yp) + np.log(xm*xm+ym*ym) - np.log(xp*xp+ym*ym) - np.log(xm*xm+yp*yp)
-    return val/(2*np.pi)
+rmax = 150
+#rgrad = -np.loadtxt('rgrad.txt', unpack=True)*10
+#phigrad = np.loadtxt('phigrad.txt', unpack = True)*10
+   
+u = np.linspace(-rmax,rmax,256)
+X,Y = np.meshgrid(u,u)
+r = np.sqrt(X**2+Y**2)
+phi = np.arctan2(Y,X)
 
-def kappa(x,y,a):
-    xm, xp, ym, yp = x - a/2, x + a/2, y - a/2, y + a/2
-    val = np.arctan(yp/xp) + np.arctan(ym/xm) \
-        - np.arctan(yp/xm) - np.arctan(ym/xp) \
-        + np.arctan(xp/yp) + np.arctan(xm/ym) \
-        - np.arctan(xp/ym) - np.arctan(xm/yp)
-    return val/(2*np.pi)
+plt.clf()
+plt.gca().set_aspect('equal')
+plt.contourf(X,Y,poten(X,Y,100),cmap='RdYlBu')
+plt.colorbar()
 
-def sumoverpix(f,x,y):
-    a = 1 - 2**.5/1e10
-    g = f(x-1,y,a) + f(x,y,a) + f(x+1,y,a)
-    return 4*g
+Xgrad, Ygrad = np.zeros_like(X), np.zeros_like(Y)
+#Xgrad = rgrad*X/r-phigrad*Y/r
+#Ygrad = rgrad*Y/r+phigrad*X/r
+Xgrad = poten_x(X,Y,100)*100
+Ygrad = poten_y(X,Y,100)*100
+pi = 10
+
+plt.figure()
+plt.gca().set_aspect('equal')
+plt.quiver(X[::pi,::pi],Y[::pi,::pi],Xgrad[::pi,::pi],Ygrad[::pi,::pi])
+plt.show()
+
+np.savetxt('Xgrad.txt',Xgrad)
+np.savetxt('Ygrad.txt', Ygrad)
