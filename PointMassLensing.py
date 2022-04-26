@@ -28,41 +28,48 @@ def poten_y(x,y,a):
 a0 = 1
 aL = 0.6
 steps = 1000
+rmax = 150
 
 f = plt.imread('monsters.png')/256
-f = f[-257:-1,:256,0]
+f = f[-257:-1,:256,1]
+#f = f[:,:,0]
 ny,nx = f.shape
 plt.imshow(f)
 plt.show()
 
-ff = np.empty((4,nx,ny),float)
-ff[0][100:105,30:35] = f[100:105,30:35]
-ff[1][130:135,130:135] = f[130:135,130:135]
+
+ff = np.empty((6,nx,ny),float)
+ff[0][100:105,105:110] = f[100:105,105:110]
+ff[1][130:135,120:125] = f[130:135,120:125]
 ff[2][100:110,90:100] = f[100:110,90:100]
-ff[3][55:60,140:145] = f[55:60,140:145]
+ff[3][100:110,140:145] = f[100:110,140:145]
+
+ff[4][100:105,105:115] = f[100:105,105:115]
+ff[4][130:135,120:125] = f[130:135,120:125]
+ff[4][100:110,90:100] = f[100:110,90:100]
+ff[4][100:110,140:145] = f[100:110,140:145]
+ff[5] = f
 
 z = np.array([9,1.8,2,5,2.1,7,6,3,8])
-u = np.linspace(-nx/2,nx/2,nx)
-v = np.linspace(-ny/2,ny/2,ny)
-X,Y = np.meshgrid(u,v)
-Xgrad, Ygrad = np.zeros_like(X), np.zeros_like(Y)
+u = np.linspace(-rmax,rmax,256)
+X,Y = np.meshgrid(u,u)
 
+Ygrad = np.loadtxt('Xgrad.txt', unpack=True)
+Xgrad = np.loadtxt('Ygrad.txt', unpack = True)
 
-r = np.sqrt(X**2+Y**2)
-phi = np.arctan2(Y,X)
-#r = np.sqrt(X[512:768,512:768]**2+Y[512:768,512:768]**2)
-#phi = np.arctan2(Y[512:768,512:768],X[512:768,512:768])
+Xgrad = Xgrad*100
+Ygrad = Ygrad*100
 
-rgrad = np.loadtxt('rgrad.txt', unpack=True)
-phigrad = np.loadtxt('phigrad.txt', unpack = True)
+pi = 1
+plt.figure()
+plt.gca().set_aspect('equal')
+plt.quiver(X[::pi,::pi],Y[::pi,::pi],Xgrad[::pi,::pi],Ygrad[::pi,::pi])
+plt.show()
 
-Xgrad = (rgrad*X/r-phigrad*Y/r)*5 #256 pixel
-Ygrad = (rgrad*Y/r+phigrad*X/r)*5
-
-#Xgrad[512:768,512:768] = rgrad*X[512:768,512:768]/r-phigrad*Y[512:768,512:768]/r #1280 pixel image
-#Ygrad[512:768,512:768] = rgrad*Y[512:768,512:768]/r+phigrad*X[512:768,512:768]/r
-Xgrad = poten_x(X,Y,50)*5 #analytical potential
-Ygrad = poten_y(X,Y,50)*5
+#Xgrad[512:768,512:768] = rgrad*X[512:768,512:768]/r-phigrad*Y[512:768,512:768]/r*100 #1280 pixel image
+#Ygrad[512:768,512:768] = rgrad*Y[512:768,512:768]/r+phigrad*X[512:768,512:768]/r*100
+#Xgrad = poten_x(X,Y,100)*5 #analytical potential
+#Ygrad = poten_y(X,Y,100)*5
 
 
 for i in range (0,len(ff)):
