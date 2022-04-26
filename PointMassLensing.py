@@ -9,22 +9,6 @@ import matplotlib.pyplot as plt
 from scipy.interpolate import RectBivariateSpline
 import Distances
 
-def poten_x(x,y,a):
-    xm, xp, ym, yp = x - a/2, x + a/2, y - a/2, y + a/2
-    val = xm*np.arctan(ym/xm) + xp*np.arctan(yp/xp) \
-        - xm*np.arctan(yp/xm) - xp*np.arctan(ym/xp) \
-        + ym*np.log(xm*xm + ym*ym)/2 + yp*np.log(xp*xp + yp*yp)/2 \
-        - ym*np.log(xp*xp + ym*ym)/2 - yp*np.log(xm*xm + yp*yp)/2
-    return val/np.pi
-
-def poten_y(x,y,a):
-    xm, xp, ym, yp = x - a/2, x + a/2, y - a/2, y + a/2
-    val = ym*np.arctan(xm/ym) + yp*np.arctan(xp/yp) \
-        - ym*np.arctan(xp/ym) - yp*np.arctan(xm/yp) \
-        + xm*np.log(xm*xm + ym*ym)/2 + xp*np.log(xp*xp + yp*yp)/2 \
-        - xm*np.log(xm*xm + yp*yp)/2 - xp*np.log(xp*xp + ym*ym)/2
-    return val/np.pi
-
 a0 = 1
 aL = 0.6
 steps = 1000
