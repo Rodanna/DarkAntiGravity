@@ -29,32 +29,32 @@ def poten_y(x,y,a):
         + xm*np.log(xm*xm + ym*ym)/2 + xp*np.log(xp*xp + yp*yp)/2 \
         - xm*np.log(xm*xm + yp*yp)/2 - xp*np.log(xp*xp + ym*ym)/2
     return val/np.pi;
-    
+
+   
 rmax = 150
-#rgrad = -np.loadtxt('rgrad.txt', unpack=True)*10
-#phigrad = np.loadtxt('phigrad.txt', unpack = True)*10
+rgrad = np.loadtxt('rgrad.txt', unpack=True)
+phigrad = np.loadtxt('phigrad.txt', unpack = True)
    
 u = np.linspace(-rmax,rmax,256)
 X,Y = np.meshgrid(u,u)
 r = np.sqrt(X**2+Y**2)
 phi = np.arctan2(Y,X)
 
+'''
 plt.clf()
 plt.gca().set_aspect('equal')
 plt.contourf(X,Y,poten(X,Y,100),cmap='RdYlBu')
-plt.colorbar()
+plt.colorbar()'''
 
 Xgrad, Ygrad = np.zeros_like(X), np.zeros_like(Y)
-#Xgrad = rgrad*X/r-phigrad*Y/r
-#Ygrad = rgrad*Y/r+phigrad*X/r
-Xgrad = poten_x(X,Y,100)*100
-Ygrad = poten_y(X,Y,100)*100
-pi = 10
+Xgrad = rgrad*X/r-phigrad*Y/r
+Ygrad = rgrad*Y/r+phigrad*X/r
+#Xgrad = poten_x(X,Y,50)*100
+#Ygrad = poten_y(X,Y,50)*100
+pi = 1
 
 plt.figure()
 plt.gca().set_aspect('equal')
 plt.quiver(X[::pi,::pi],Y[::pi,::pi],Xgrad[::pi,::pi],Ygrad[::pi,::pi])
 plt.show()
 
-np.savetxt('Xgrad.txt',Xgrad)
-np.savetxt('Ygrad.txt', Ygrad)
