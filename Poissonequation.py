@@ -8,8 +8,6 @@ Created on Thu Mar 24 14:35:03 2022
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy import special
-import Distances
-from scipy.interpolate import RectBivariateSpline
 
 rmax = 150
 
@@ -18,16 +16,16 @@ X,Y = np.meshgrid(u,u)
 r = np.sqrt(X**2+Y**2)
 phi = np.arctan2(Y,X)
 z = 0
-
+mass = 10
 rho = np.zeros((len(X),len(Y)),float)  
 
-
-mass = 10 #point mass distribution
-p1 = np.array([180,150,110,120,150,89,3,120,130,98,130,167,29,130,111,98,176,1,150,88,133,70])
-p2 = np.array([230,120,120,155,90,5,90,170,160,78,129,130,180,67,130,110,120,70,189,10,110,167])
-for i in range(0,22):
+#point mass distribution
+p1 = np.array([94,96,99,212,180,150,110,120,150,89,3,120,130,98,130,167,29,130,111,98,176,1,150,88,133,70])
+p2 = np.array([116,69,230,144,230,120,120,155,90,5,90,170,160,78,129,130,180,67,130,110,120,70,189,10,110,167])
+for i in range(0,23):
     rho[p1[i]][p2[i]] = mass
     
+ 
 '''
 for i in range (78,177): #square
     for j in range(78,177):
@@ -41,8 +39,8 @@ plt.colorbar()
 plt.show()
 
 nr, root = np.loadtxt('roots.txt', unpack=True) #import bessel roots
-nr = nr[:50]
-root = root[:50]
+nr = nr[:]
+root = root[:]
 a = np.ones(len(nr),float)
 b = np.ones(len(nr),float)
 nr = [round(m) for m in nr]
