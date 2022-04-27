@@ -27,7 +27,6 @@ ff[0][100:105,105:110] = f[100:105,105:110]
 ff[1][130:135,120:125] = f[130:135,120:125]
 ff[2][100:110,90:100] = f[100:110,90:100]
 ff[3][100:110,140:145] = f[100:110,140:145]
-
 ff[4][100:105,105:115] = f[100:105,105:115]
 ff[4][130:135,120:125] = f[130:135,120:125]
 ff[4][100:110,90:100] = f[100:110,90:100]
@@ -38,22 +37,17 @@ z = np.array([9,1.8,2,5,2.1,7,6,3,8])
 u = np.linspace(-rmax,rmax,256)
 X,Y = np.meshgrid(u,u)
 
-Ygrad = np.loadtxt('Xgrad.txt', unpack=True)
-Xgrad = np.loadtxt('Ygrad.txt', unpack = True)
+Xgrad = np.loadtxt('Xgrad.txt', unpack=True)*100
+Ygrad = np.loadtxt('Ygrad.txt', unpack = True)*100
 
-Xgrad = Xgrad*100
-Ygrad = Ygrad*100
-
-pi = 1
+pi = 5
 plt.figure()
 plt.gca().set_aspect('equal')
-plt.quiver(X[::pi,::pi],Y[::pi,::pi],Xgrad[::pi,::pi],Ygrad[::pi,::pi])
+plt.quiver(Y[::pi,::pi],X[::pi,::pi],Xgrad[::pi,::pi],Ygrad[::pi,::pi])
 plt.show()
 
 #Xgrad[512:768,512:768] = rgrad*X[512:768,512:768]/r-phigrad*Y[512:768,512:768]/r*100 #1280 pixel image
 #Ygrad[512:768,512:768] = rgrad*Y[512:768,512:768]/r+phigrad*X[512:768,512:768]/r*100
-#Xgrad = poten_x(X,Y,100)*5 #analytical potential
-#Ygrad = poten_y(X,Y,100)*5
 
 
 for i in range (0,len(ff)):
