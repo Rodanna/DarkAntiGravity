@@ -22,7 +22,7 @@ ny,nx = f.shape
 plt.imshow(f)
 plt.show()
 
-ff = np.empty((8,nx,ny),float)
+ff = np.empty((12,nx,ny),float)
 ff[0][980:1050,970:1050] = f[980:1050,970:1050]
 ff[1][980:1070,210:300] = f[980:1070,210:300]
 ff[2][470:510,500:550] = f[470:510,500:550]
@@ -47,6 +47,13 @@ phi = np.arctan2(Y,X)
 
 Xgrad = 2*X/(1+X**2+q*Y**2)*C #analytic functions
 Ygrad = 2*q*Y/(1+X**2+q*Y**2)*C
+
+Xgrad = np.zeros_like(X)
+Ygrad = np.zeros_like(Y)
+Ygrad[int(nx/2-128):int(nx/2+128),int(ny/2-128):int(ny/2+128)] = np.loadtxt('Xgrad.txt', unpack=True)
+Xgrad[int(nx/2-128):int(nx/2+128),int(ny/2-128):int(ny/2+128)] = np.loadtxt('Ygrad.txt', unpack = True)
+Xgrad = Xgrad*100
+Ygrad = Ygrad*100
 
 for i in range (0,len(ff)):
     a = Distances.scalefactor(z[i])
