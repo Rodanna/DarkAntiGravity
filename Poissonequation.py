@@ -10,15 +10,15 @@ import matplotlib.pyplot as plt
 from scipy import special
 
 rmax = 150 #microradians
-pixeltomicrorad = 0.11*4.848
+pixeltomicrorad = 0.533295049220494**2 #1 pixel - 0.11 arcseconds
 
 u = np.linspace(-rmax,rmax,256)
-X,Y = np.meshgrid(u,u) #microrad
-r = np.sqrt(X**2+Y**2) #microrad
+X,Y = np.meshgrid(u,u) 
+r = np.sqrt(X**2+Y**2) 
 phi = np.arctan2(Y,X)
 z = 0
-dens = 2 #kg/m^2
-k = np.zeros((len(X),len(Y)),float)
+dens = 2 
+k = np.zeros((len(X),len(Y)),float) #dimensionless
 
 '''
 #point mass distribution
@@ -26,7 +26,7 @@ p1 = np.array([94,96,99,212,180,150,110,120,150,89,3,120,130,98,130,167,29,130,1
 p2 = np.array([116,69,230,144,230,120,120,155,90,5,90,170,160,78,129,130,180,67,130,110,120,70,189,10,110,167])
 for i in range(0,23):
     k[p1[i]][p2[i]] = dens
-'''    
+''' 
  
 '''
 #square
@@ -78,21 +78,20 @@ b = np.ones(len(nr),float)
 nr = [int(m) for m in nr]
 
 Ba,Bb = 0,0
-area = 4*rmax**2/(256*256) # microrad^2/pixel^2
-area = area / pixeltomicrorad**2 # microrad^2
+area = 4*rmax**2/(256*256) #microrad**2 per pixel
 for n in range(0,len(nr)): #coefficients of Fourier Bessel series
     m = nr[n]
     alpha = root[n]
-    N = rmax**2*np.pi/2*(special.jv(m+1,alpha))**2 #microrads^2
+    N = rmax**2*np.pi/2*(special.jv(m+1,alpha))**2 #microrad**2
     if m == 0:
-        N0 = N*2 #microrads^2
+        N0 = N*2 
     bess = special.jv(m,alpha/rmax*r)
     fnc = bess*np.cos(m*phi)
     fns = bess*np.sin(m*phi)
-    Ba = area * np.sum(k*fnc)  #microrad^2
+    Ba = area * np.sum(k*fnc) #microrad**2 (integral over pixel)
     Bb = area * np.sum(k*fns)
     if m != 0:
-        a[n] = Ba/N
+        a[n] = Ba/N #dimensionless
         b[n] = Bb/N
     else: 
         a[n] = Ba/N0
@@ -107,7 +106,7 @@ for i in range(0,len(nr)): #Fourier Bessel series with coefficients
     angpart = a[i]*np.cos(m*phi)
     if m > 0:
         angpart += b[i]*np.sin(m*phi)
-    z -= 2*(rmax/alpha)**2*special.jv(m,alpha*r/rmax)*angpart #microrad^2
+    z += 2*(rmax/alpha)**2*special.jv(m,alpha*r/rmax)*angpart #microrad**2
 
 
 plt.clf()
@@ -122,17 +121,15 @@ phigrad = 0
 for i in range(0,len(nr)):
     m = nr[i]
     alpha = root[i] #microrad
-    rgrad -= 2*(rmax/alpha)**2*(b[i]*np.sin(m*phi)+a[i]*np.cos(m*phi))*(alpha/rmax)*special.jvp(m,r*alpha/rmax,n=1)
-    phigrad -= 2*(rmax/alpha)**2*(b[i]*m*np.cos(m*phi)-a[i]*m*np.sin(m*phi))*special.jv(m,r*alpha/rmax)/r
+    rgrad += 2*(rmax/alpha)**2*(b[i]*np.sin(m*phi)+a[i]*np.cos(m*phi))*(alpha/rmax)*special.jvp(m,r*alpha/rmax,n=1)
+    phigrad += 2*(rmax/alpha)**2*(b[i]*m*np.cos(m*phi)-a[i]*m*np.sin(m*phi))*special.jv(m,r*alpha/rmax)/r
 
-Xgrad = rgrad*X/r-phigrad*Y/r #microrad
-Ygrad = rgrad*Y/r+phigrad*X/r #microrad
+Xgrad = rgrad*X/r-phigrad*Y/r #microradian
+Ygrad = rgrad*Y/r+phigrad*X/r 
 
 np.savetxt('Xgrad.txt',Xgrad)
 np.savetxt('Ygrad.txt', Ygrad)
 
-Xgrad = Xgrad*1000
-Ygrad = Ygrad*1000
 
 plt.figure()
 plt.gca().set_aspect('equal')
