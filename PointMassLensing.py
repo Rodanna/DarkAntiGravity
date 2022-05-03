@@ -33,8 +33,8 @@ z = np.array([9,1.8,2,5,2.1,7,6,3,8])
 u = np.linspace(-rmax,rmax,256)
 X,Y = np.meshgrid(u,u)
 
-Xgrad = np.loadtxt('Xgrad.txt', unpack=True)*2
-Ygrad = np.loadtxt('Ygrad.txt', unpack = True)*2
+Xgrad = np.loadtxt('Xgrad.txt', unpack=True)
+Ygrad = np.loadtxt('Ygrad.txt', unpack = True)
 
 for i in range (0,len(ff)):
     a = Distances.scalefactor(z[i])
