@@ -125,11 +125,25 @@ for i in range(0,len(nr)):
     phigrad += 2*(rmax/alpha)**2*(b[i]*m*np.cos(m*phi)-a[i]*m*np.sin(m*phi))*special.jv(m,r*alpha/rmax)/r
 
 Xgrad = rgrad*X/r-phigrad*Y/r #microradian
-Ygrad = rgrad*Y/r+phigrad*X/r 
+Ygrad = rgrad*Y/r+phigrad*X/r
+
+plt.contour(X,Y,Xgrad)
+plt.show()
+plt.contour(X,Y,Ygrad)
+plt.show()
 
 np.savetxt('Xgrad.txt',Xgrad)
 np.savetxt('Ygrad.txt', Ygrad)
 
+u = np.linspace(-rmax,rmax,256)
+X,Y = np.meshgrid(u,u)
+
+Xgrad = np.loadtxt('Xgrad.txt')
+Ygrad = np.loadtxt('Ygrad.txt')
+plt.contour(X,Y,Xgrad)
+plt.show()
+plt.contour(X,Y,Ygrad)
+plt.show()
 
 plt.figure()
 plt.gca().set_aspect('equal')

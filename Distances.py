@@ -30,23 +30,23 @@ def redshift(a):
 def H(a):
     return H0*np.sqrt((Om/a**3 + Orad/a**4 + OL)) # 1/s
 
-def comoving(a):
-    da = (a1-a0)/steps
+def comoving(a0,a1):
+    da = (a0-a1)/steps
     INT = 0
     for i in range (0,steps):
         INT += 1/(a[i]**2*H(a[i]))*da # cs
     return INT
 
-def lighttravel(a):
-    da = (a1-a0)/steps
+def lighttravel(a0,a1):
+    da = (a0-a1)/steps
     INT = 0
     for i in range (0,steps):
         INT += 1/(a[i]*H(a[i]))*da # cs
     return INT
 
-def angular(a):
-    com = comoving(a)
-    z = redshift(a)
+def angular(a0,a1):
+    com = comoving(a0,a1)
+    z = redshift(a1)
     return com/(1+z)
 
 def luminosity(a):
