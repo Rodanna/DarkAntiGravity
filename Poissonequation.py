@@ -11,12 +11,14 @@ from scipy import special
 
 rmax = 150 #microradians
 pixeltomicrorad = 0.533295049220494**2 #1 pixel - 0.11 arcseconds
+res = 1280
 
-u = np.linspace(-rmax,rmax,256)
+u = np.linspace(-rmax,rmax,res)
 X,Y = np.meshgrid(u,u) 
 r = np.sqrt(X**2+Y**2) 
 phi = np.arctan2(Y,X)
 z = 0
+w = 0
 dens = 2 
 k = np.zeros((len(X),len(Y)),float) #dimensionless
 
@@ -30,17 +32,17 @@ for i in range(0,23):
  
 '''
 #square
-for i in range (78,177): 
-    for j in range(78,177):
+for i in range (103,152): 
+    for j in range(103,152):
         k[i][j] = dens
 '''
 
 #circle
 for i in range(0,len(X)):
     for j in range(0,len(Y)):
-        mi = 128 - i
-        mj = 128 - j
-        if np.sqrt(mi**2+mj**2) <= 50:
+        mi = int(res/2) - i
+        mj = int(res/2) - j
+        if np.sqrt(mi**2+mj**2) <= 200:
             k[i][j] = dens
 
 '''
@@ -65,20 +67,21 @@ for i in range (58,157):
 '''            
             
 plt.clf()
+plt.title('mass distribution')
 plt.gca().set_aspect('equal')
 plt.contourf(X,Y,k,cmap='RdYlBu')
 plt.colorbar()
 plt.show()
 
 nr, root = np.loadtxt('roots.txt', unpack=True) #import bessel roots
-nr = nr[:50]
-root = root[:50]
+nr = nr[:100]
+root = root[:100]
 a = np.ones(len(nr),float)
 b = np.ones(len(nr),float)
 nr = [int(m) for m in nr]
 
 Ba,Bb = 0,0
-area = 4*rmax**2/(256*256) #microrad**2 per pixel
+area = 4*rmax**2/res**2 #microrad**2 per pixel
 for n in range(0,len(nr)): #coefficients of Fourier Bessel series
     m = nr[n]
     alpha = root[n]
@@ -107,11 +110,20 @@ for i in range(0,len(nr)): #Fourier Bessel series with coefficients
     if m > 0:
         angpart += b[i]*np.sin(m*phi)
     z += 2*(rmax/alpha)**2*special.jv(m,alpha*r/rmax)*angpart #microrad**2
+    w += special.jv(m,alpha*r/rmax)*angpart 
 
 
 plt.clf()
+plt.title('potential')
 plt.gca().set_aspect('equal')
 plt.contourf(X,Y,z,cmap='RdYlBu')
+plt.colorbar()
+plt.show()
+
+plt.clf()
+plt.title('reconstructed density')
+plt.gca().set_aspect('equal')
+plt.contourf(X,Y,w,cmap='RdYlBu')
 plt.colorbar()
 plt.show()
 
@@ -127,22 +139,18 @@ for i in range(0,len(nr)):
 Xgrad = rgrad*X/r-phigrad*Y/r #microradian
 Ygrad = rgrad*Y/r+phigrad*X/r
 
-plt.contour(X,Y,Xgrad)
-plt.show()
-plt.contour(X,Y,Ygrad)
-plt.show()
 
 np.savetxt('Xgrad.txt',Xgrad)
 np.savetxt('Ygrad.txt', Ygrad)
 
-u = np.linspace(-rmax,rmax,256)
+u = np.linspace(-rmax,rmax,res)
 X,Y = np.meshgrid(u,u)
 
-Xgrad = np.loadtxt('Xgrad.txt')
-Ygrad = np.loadtxt('Ygrad.txt')
 plt.contour(X,Y,Xgrad)
+plt.title('Xgrad')
 plt.show()
 plt.contour(X,Y,Ygrad)
+plt.title('Ygrad')
 plt.show()
 
 plt.figure()

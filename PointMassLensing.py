@@ -13,43 +13,48 @@ a0 = 1
 aL = 0.6
 steps = 1000
 rmax = 150
+res = 1280
 
-f = plt.imread('monsters.png')/256
-f = f[-257:-1,:256,1]
+f = plt.imread('HUBBLE.jpg')/res
+f = f[:,:,0]
 ny,nx = f.shape
-#plt.imshow(f)
-#plt.show()
 
-ff = np.empty((6,nx,ny),float)
-ff[0][100:105,105:110] = f[100:105,105:110]
-ff[1][125:131,125:131] = f[125:131,125:131]
-ff[2][100:110,90:100] = f[100:110,90:100]
-ff[3][100:110,140:145] = f[100:110,140:145]
-ff[4][100:105,105:115], ff[4][130:135,120:125] = f[100:105,105:115], f[130:135,120:125]
-ff[4][100:110,90:100], ff[4][100:110,140:145] = f[100:110,90:100], f[100:110,140:145]
-ff[5] = f
+ff = np.empty((8,nx,ny),float)
+
+ff[0][630:680,640:690] = f[630:680,640:690]
+ff[1][600:650,500:520] = f[600:650,500:520]
+ff[2][500:550,700:750] = f[500:550,700:750]
+ff[3][530:580,700:750] = f[530:580,700:750]
+ff[4][620:640,650:700] = f[620:640,650:700]
+ff[5][600:610,600:620] = f[600:610,600:620]
+ff[6][630:680,640:690] = f[630:680,640:690]
+ff[6][600:650,500:520] = f[600:650,500:520]
+ff[6][500:550,700:750] = f[500:550,700:750]
+ff[6][530:580,700:750] = f[530:580,700:750]
+ff[6][620:640,650:700] = f[620:640,650:700]
+ff[6][600:610,600:620] = f[600:610,600:620]
+ff[7] = f
+
 
 
 z = np.array([9,1.8,2,5,2.1,7,6,3,8])
-u = np.linspace(-rmax,rmax,256)
+u = np.linspace(-rmax,rmax,res)
 X,Y = np.meshgrid(u,u)
 
-Xgrad = np.loadtxt('Xgrad.txt')
-Ygrad = np.loadtxt('Ygrad.txt')
-Xgrad = -Xgrad
-Ygrad = -Ygrad
+Xgrad = -np.loadtxt('Xgrad.txt')
+Ygrad = -np.loadtxt('Ygrad.txt')
+
+'''
 cs = plt.contour(X,Y,Xgrad)
 plt.clabel(cs)
 plt.show()
 plt.contour(X,Y,Ygrad)
-plt.show()
+plt.show()'''
 
-for i in range (0,len(ff)):
+for i in range (0,len(ff)-1):
     asrc = Distances.scalefactor(z[i])
     Ds = Distances.angular(1,asrc)
     Dds = Distances.angular(aL,asrc)
-    for t in range (0,250,20):
-        ff[i][0,t:t+10] = ff[i][0,t:t+10]
     x,y = X-(Dds/Ds)*Xgrad, Y-(Dds/Ds)*Ygrad
     spline = RectBivariateSpline(u,u,ff[i].T)
     g = spline.ev(x,y)

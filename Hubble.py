@@ -11,7 +11,7 @@ import Distances
 
 
 q = 0.8
-C= 100000
+C= 50000
 a0 = 1
 aL = 0.6
 steps = 1000
@@ -38,7 +38,7 @@ ff[7][620:700,470:550] = f[620:700,470:550]
 ff[7][490:570,710:780] = f[490:570,710:780]
 ff[7][730:800,400:450] = f[730:800,400:450]
 
-z = np.array([9,1.8,2,5,2.1,7,6,3,8])
+z = np.array([9,1.8,2,5,2.1,7,6,3])
 u = np.linspace(-nx/2,nx/2,nx)
 v = np.linspace(-ny/2,ny/2,ny)
 X,Y = np.meshgrid(u,v)
@@ -48,19 +48,12 @@ phi = np.arctan2(Y,X)
 Xgrad = 2*X/(1+X**2+q*Y**2)*C #analytic functions
 Ygrad = 2*q*Y/(1+X**2+q*Y**2)*C
 
-Xgrad = np.zeros_like(X)
-Ygrad = np.zeros_like(Y)
-Ygrad[int(nx/2-128):int(nx/2+128),int(ny/2-128):int(ny/2+128)] = np.loadtxt('Xgrad.txt', unpack=True)
-Xgrad[int(nx/2-128):int(nx/2+128),int(ny/2-128):int(ny/2+128)] = np.loadtxt('Ygrad.txt', unpack = True)
-Xgrad = Xgrad*100
-Ygrad = Ygrad*100
 
-for i in range (0,len(ff)):
-    a = Distances.scalefactor(z[i])
-    A = np.linspace(a,a0,steps)
-    B = np.linspace(a,aL,steps)
-    Ds = Distances.angular(A)[0]
-    Dds = Distances.angular(B)[0]    
+
+for i in range (0,len(ff)-1):
+    asrc = Distances.scalefactor(z[i])
+    Ds = Distances.angular(1,asrc)
+    Dds = Distances.angular(aL,asrc) 
     x,y = X-(Ds/Dds)*Xgrad, Y-(Ds/Dds)*Ygrad
     spline = RectBivariateSpline(X[0,:],Y[:,0],ff[i].T)
     g = spline.ev(x,y)
