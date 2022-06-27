@@ -54,15 +54,15 @@ plt.show()
 plt.contour(X,Y,Ygrad)
 plt.show()'''
 
-for i in range (0,len(ff)):
-    x0 = y0 = rmax/10
+for i in range (0,len(ff)-1):
+    x0 = y0 = 0
     asrc = Distances.scalefactor(z[i])
     Ds = Distances.angular(a0,asrc)
     Dds = Distances.angular(aL,asrc)
     Dd = Distances.angular(a0,aL)
     x,y = X-(Dds/Ds)*Xgrad, Y-(Dds/Ds)*Ygrad
     tnodim = Ds/Dds*((X-x0)**2+(Y-y0)**2)/2 + potential
-    t = (1+z[i])/c*Dd*Ds/Dds*tnodim #arrival time surface in s
+    t = (1+z[i])*Ds*Dd/Dds*tnodim #arrival time surface in s
     spline = RectBivariateSpline(u,u,ff[i].T)
     g = spline.ev(x,y)
     plt.imshow(ff[i].T,origin='lower',extent=[-rmax,rmax,-rmax,rmax])
@@ -73,9 +73,7 @@ for i in range (0,len(ff)):
     plt.clf()
     tmin = np.min(t)
     tmax = np.max(t)
-    levs = np.linspace(tmin,tmin+(tmax-tmin)/5,50)
+    levs = np.linspace(tmin,(tmax-tmin)/5,20)
     plt.contour(X,Y,t,levels=levs)
-    plt.gca().set_aspect('equal')
-#    plt.imshow(t.T,origin='lower',extent=[-rmax,rmax,-rmax,rmax])
     plt.pause(1)
     plt.clf()
