@@ -14,6 +14,8 @@ aL = 0.6
 steps = 1000
 rmax = 150
 res = 1280
+t = 0
+c = 1
 
 f = plt.imread('HUBBLE.jpg')/res
 f = f[:,:,0]
@@ -43,6 +45,7 @@ X,Y = np.meshgrid(u,u)
 
 Xgrad = -np.loadtxt('Xgrad.txt')
 Ygrad = -np.loadtxt('Ygrad.txt')
+potential = np.loadtxt('potential.txt')
 
 '''
 cs = plt.contour(X,Y,Xgrad)
@@ -53,14 +56,19 @@ plt.show()'''
 
 for i in range (0,len(ff)-1):
     asrc = Distances.scalefactor(z[i])
-    Ds = Distances.angular(1,asrc)
+    Ds = Distances.angular(a0,asrc)
     Dds = Distances.angular(aL,asrc)
+    Dd = Distances.angular(a0,aL)
     x,y = X-(Dds/Ds)*Xgrad, Y-(Dds/Ds)*Ygrad
+    t = (1+z[i])/c*Ds*Dd/Dds*(((X-x)**2+(Y-y)**2)/2-potential) #arrival time surface in s
     spline = RectBivariateSpline(u,u,ff[i].T)
     g = spline.ev(x,y)
     plt.imshow(ff[i].T,origin='lower',extent=[-rmax,rmax,-rmax,rmax])
     plt.pause(1)
     plt.clf()
     plt.imshow(g.T,origin='lower',extent=[-rmax,rmax,-rmax,rmax])
+    plt.pause(1)
+    plt.clf()
+    plt.imshow(t.T,origin='lower',extent=[-rmax,rmax,-rmax,rmax])
     plt.pause(1)
     plt.clf()
