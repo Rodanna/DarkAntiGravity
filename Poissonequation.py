@@ -112,6 +112,7 @@ for i in range(0,len(nr)): #Fourier Bessel series with coefficients
     z += 2*(rmax/alpha)**2*special.jv(m,alpha*r/rmax)*angpart #microrad**2
     w += special.jv(m,alpha*r/rmax)*angpart 
 
+np.savetxt('potential.txt',z)
 
 plt.clf()
 plt.title('potential')
