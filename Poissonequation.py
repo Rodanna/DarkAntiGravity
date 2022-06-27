@@ -10,7 +10,6 @@ import matplotlib.pyplot as plt
 from scipy import special
 
 rmax = 150 #microradians
-pixeltomicrorad = 0.533295049220494**2 #1 pixel - 0.11 arcseconds
 res = 1280
 
 u = np.linspace(-rmax,rmax,res)
