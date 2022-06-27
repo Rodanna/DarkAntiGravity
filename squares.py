@@ -31,27 +31,27 @@ def poten_y(x,y,a):
     return val/np.pi;
 
    
-rmax = 150
-rgrad = np.loadtxt('rgrad.txt', unpack=True)
-phigrad = np.loadtxt('phigrad.txt', unpack = True)
-   
+rmax = 150 
 u = np.linspace(-rmax,rmax,256)
 X,Y = np.meshgrid(u,u)
 r = np.sqrt(X**2+Y**2)
 phi = np.arctan2(Y,X)
 
-'''
-plt.clf()
-plt.gca().set_aspect('equal')
-plt.contourf(X,Y,poten(X,Y,100),cmap='RdYlBu')
-plt.colorbar()'''
 
-Xgrad, Ygrad = np.zeros_like(X), np.zeros_like(Y)
-Xgrad = rgrad*X/r-phigrad*Y/r
-Ygrad = rgrad*Y/r+phigrad*X/r
-#Xgrad = poten_x(X,Y,50)*100
-#Ygrad = poten_y(X,Y,50)*100
-pi = 1
+pi = 5
+
+Xgrad = -np.loadtxt('Xgrad.txt')
+Ygrad = -np.loadtxt('Ygrad.txt')
+
+plt.figure()
+plt.gca().set_aspect('equal')
+plt.quiver(X[::pi,::pi],Y[::pi,::pi],Xgrad[::pi,::pi],Ygrad[::pi,::pi])
+plt.show()
+
+
+
+Xgrad = poten_x(X,Y,50)
+Ygrad = poten_y(X,Y,50)
 
 plt.figure()
 plt.gca().set_aspect('equal')
