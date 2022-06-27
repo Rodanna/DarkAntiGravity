@@ -16,15 +16,13 @@ Om = 0.3089
 OL = 0.6911
 Orad = 1e-4
 steps = 1000
-a0 = 0.0827129859387924
-a1 = 1
-a = np.linspace(a0,a1,steps)
+
 
 def scalefactor(z):
     return 1/(1+z)
 
-def redshift(a):
-    z = (1-a)/a
+def redshift(a1):
+    z = (1-a1)/a1
     return z
 
 def H(a):
@@ -32,6 +30,7 @@ def H(a):
 
 def comoving(a0,a1):
     da = (a0-a1)/steps
+    a = np.linspace(a0,a1,steps)
     INT = 0
     for i in range (0,steps):
         INT += 1/(a[i]**2*H(a[i]))*da # cs
@@ -40,6 +39,7 @@ def comoving(a0,a1):
 def lighttravel(a0,a1):
     da = (a0-a1)/steps
     INT = 0
+    a = np.linspace(a0,a1,steps)
     for i in range (0,steps):
         INT += 1/(a[i]*H(a[i]))*da # cs
     return INT
@@ -49,9 +49,9 @@ def angular(a0,a1):
     z = redshift(a1)
     return com/(1+z)
 
-def luminosity(a):
-    com = comoving(a)
-    z = redshift(a)
+def luminosity(a0,a1):
+    com = comoving(a0,a1)
+    z = redshift(a1)
     return com*(1+z)
     
 
