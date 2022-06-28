@@ -12,8 +12,7 @@ import matplotlib.pyplot as plt
 filename = "data.h5"
 
 with h5py.File(filename, "r") as f:
-    # Print all root level object names (aka keys) 
-    # these can be group or dataset names 
+    # Print all root level object names (aka keys)
     print("Keys: %s" % f.keys())
     # get first object name/key; may or may NOT be a group
     a_group_key = list(f.keys())[0]
