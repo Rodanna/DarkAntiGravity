@@ -17,8 +17,8 @@ res = 1280
 t = 0
 c = 1
 
-f = plt.imread('HUBBLE.jpg')/res
-f = f[:,:,0]
+f = plt.imread('monsters.png')/res
+f = f[:256,:256,0]
 ny,nx = f.shape
 
 ff = np.empty((8,nx,ny),float)
@@ -35,7 +35,7 @@ ff[6][500:550,700:750] = f[500:550,700:750]
 ff[6][530:580,700:750] = f[530:580,700:750]
 ff[6][620:640,650:700] = f[620:640,650:700]
 ff[6][600:610,600:620] = f[600:610,600:620]
-ff[7] = f
+ff[7][150:170,150:170] = f[150:170,150:170]
 
 
 
@@ -43,9 +43,9 @@ z = np.array([9,1.8,2,5,2.1,7,6,3,8])
 u = np.linspace(-rmax,rmax,res)
 X,Y = np.meshgrid(u,u)
 
-Xgrad = -np.loadtxt('Xgrad.txt')
-Ygrad = -np.loadtxt('Ygrad.txt')
-potential = np.loadtxt('potential.txt')
+Xgrad = -np.loadtxt('Xgrad.txt')*500
+Ygrad = -np.loadtxt('Ygrad.txt')*500
+potential = np.loadtxt('potential.txt')*500
 
 '''
 cs = plt.contour(X,Y,Xgrad)
@@ -54,7 +54,7 @@ plt.show()
 plt.contour(X,Y,Ygrad)
 plt.show()'''
 
-for i in range (0,len(ff)):
+for i in range (7,len(ff)):
     x0 = y0 = rmax/10
     asrc = Distances.scalefactor(z[i])
     Ds = Distances.angular(a0,asrc)
@@ -77,7 +77,7 @@ for i in range (0,len(ff)):
     tmin = np.min(t)
     tmax = np.max(t)
     levs = np.linspace(tmin,tmin + (tmax-tmin)/5,20)
-    plt.contour(X,Y,t,levels=levs)
+    plt.contour(Y,X,t,levels=levs)
     plt.title('arrival time surface')
     plt.gca().set_aspect('equal')
     plt.pause(1)
