@@ -27,7 +27,7 @@ p1 = np.array([94,96,99,212,180,150,110,120,150,89,3,120,130,98,130,167,29,130,1
 p2 = np.array([116,69,230,144,230,120,120,155,90,5,90,170,160,78,129,130,180,67,130,110,120,70,189,10,110,167])
 for i in range(0,23):
     k[p1[i]][p2[i]] = dens
-''' 
+'''
  
 '''
 #square
@@ -36,6 +36,9 @@ for i in range (103,152):
         k[i][j] = dens
 '''
 
+k = np.loadtxt('galaxy.txt')
+
+'''
 #circle
 for i in range(0,len(X)):
     for j in range(0,len(Y)):
@@ -43,7 +46,7 @@ for i in range(0,len(X)):
         mj = int(res/2) - j
         if np.sqrt(mi**2+mj**2) <= 200:
             k[i][j] = dens
-
+'''
 '''
 #rectangle
 for i in range (55,200): 
@@ -73,8 +76,8 @@ plt.colorbar()
 plt.show()
 
 nr, root = np.loadtxt('roots.txt', unpack=True) #import bessel roots
-nr = nr[:100]
-root = root[:100]
+nr = nr[:500]
+root = root[:500]
 a = np.ones(len(nr),float)
 b = np.ones(len(nr),float)
 nr = [int(m) for m in nr]
