@@ -17,8 +17,8 @@ res = 1280
 t = 0
 c = 1
 
-f = plt.imread('monsters.png')/res
-f = f[:256,:256,0]
+f = plt.imread('HUBBLE.jpg')/res
+f = f[:,:,0]
 ny,nx = f.shape
 
 ff = np.empty((8,nx,ny),float)
@@ -43,9 +43,9 @@ z = np.array([9,1.8,2,5,2.1,7,6,3,8])
 u = np.linspace(-rmax,rmax,res)
 X,Y = np.meshgrid(u,u)
 
-Xgrad = -np.loadtxt('Xgrad.txt')*500
-Ygrad = -np.loadtxt('Ygrad.txt')*500
-potential = np.loadtxt('potential.txt')*500
+Xgrad = -np.loadtxt('Xgrad.txt')*20000
+Ygrad = -np.loadtxt('Ygrad.txt')*20000
+potential = np.loadtxt('potential.txt')*20000
 
 '''
 cs = plt.contour(X,Y,Xgrad)
@@ -54,7 +54,7 @@ plt.show()
 plt.contour(X,Y,Ygrad)
 plt.show()'''
 
-for i in range (7,len(ff)):
+for i in range (0,len(ff)):
     x0 = y0 = rmax/10
     asrc = Distances.scalefactor(z[i])
     Ds = Distances.angular(a0,asrc)
