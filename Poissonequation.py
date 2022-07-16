@@ -21,6 +21,7 @@ w = 0
 dens = 2 
 k = np.zeros((len(X),len(Y)),float) #dimensionless
 
+
 '''
 #point mass distribution
 p1 = np.array([94,96,99,212,180,150,110,120,150,89,3,120,130,98,130,167,29,130,111,98,176,1,150,88,133,70])
@@ -76,7 +77,7 @@ plt.colorbar()
 plt.show()
 
 nr, root = np.loadtxt('roots.txt', unpack=True) #import bessel roots
-nr = nr[:500]
+nr = nr[:100]
 root = root[:500]
 a = np.ones(len(nr),float)
 b = np.ones(len(nr),float)

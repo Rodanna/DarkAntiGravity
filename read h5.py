@@ -10,7 +10,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 filename = "data.h5"
-Mpctom = 3.08567758128e22
 
 with h5py.File(filename, "r") as f:
     # Print all root level object names (aka keys)
@@ -23,6 +22,14 @@ dens = np.zeros_like(ds_arr)
 rmax = 150 #microradians
 res = 4000
 mass = 0
+G = 6.67408e-11 #m^3/kgs^2
+
+Mpctom = 3.08567758128e22
+mdensity = 3.21956112e-27 #kg/m^3
+
+rho2D = mdensity*187*Mpctom # kg/m^2
+
+N = 0
 
 u = np.linspace(-rmax,rmax,res)
 X,Y = np.meshgrid(u,u)
@@ -35,16 +42,18 @@ for i in range(0,len(X)):
         if np.sqrt(mi**2+mj**2) <= 500:
             dens[i,j] = np.exp(ds_arr[i,j])
 
-density = mass / (187*Mpctom)**3 # kg/m^3
-criticaldensity = 1.028613775e-26 #kg/m^3
+density = mass / (187*Mpctom)**2
+N = rho2D/density
+
+print (N)
+print(rho2D)
 print(density)
-N = criticaldensity/density
-print(N)
+print(N*density)
 
 plt.clf()
 plt.title('total mass distribution')
 plt.gca().set_aspect('equal')
-plt.contourf(X,Y,dens,cmap='RdYlBu')
+plt.contourf(X,Y,N*np.exp(ds_arr),cmap='RdYlBu')
 plt.colorbar()
 plt.show()
 
