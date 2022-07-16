@@ -15,9 +15,10 @@ steps = 1000
 rmax = 150
 res = 1280
 t = 0
-c = 300000000 #m/s
+G = 6.67408e-11 #m^3/kgs^2
 rho2D = 0.01857756655504864
-norm = 7.503092904640276e+34 #m/s^2
+norm = 1.124213809939389e+45*G #m/s^2
+
 
 
 f = plt.imread('HUBBLE.jpg')/res
@@ -57,7 +58,7 @@ for i in range (0,len(ff)):
     Ds = Distances.angular(a0,asrc)
     Dds = Distances.angular(aL,asrc)
     Dd = Distances.angular(a0,aL)
-    N = 4*np.pi*Dd*Dds/(c**2*Ds)*norm #dimensionless
+    N = 4*np.pi*Dd*Dds/(300000000**2*Ds)*norm #dimensionless
     print(N)
     x,y = X-(Dds/Ds)*Xgrad*N, Y-(Dds/Ds)*Ygrad*N
     

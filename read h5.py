@@ -22,14 +22,9 @@ dens = np.zeros_like(ds_arr)
 rmax = 150 #microradians
 res = 4000
 mass = 0
-G = 6.67408e-11 #m^3/kgs^2
 
-Mpctom = 3.08567758128e22
+Mpctom = 3.08567758128e+22
 mdensity = 3.21956112e-27 #kg/m^3
-
-rho2D = mdensity*187*Mpctom # kg/m^2
-
-N = 0
 
 u = np.linspace(-rmax,rmax,res)
 X,Y = np.meshgrid(u,u)
@@ -42,11 +37,11 @@ for i in range(0,len(X)):
         if np.sqrt(mi**2+mj**2) <= 500:
             dens[i,j] = np.exp(ds_arr[i,j])
 
-density = mass / (187*Mpctom)**2
-N = rho2D/density
+density = mass / (187*Mpctom)**3
+N = mdensity/density
 
-print (N)
-print(rho2D)
+print(N)
+print(mdensity)
 print(density)
 print(N*density)
 
@@ -62,7 +57,7 @@ np.savetxt('totalgalaxy.txt',dens)
 plt.clf()
 plt.title('mass distribution')
 plt.gca().set_aspect('equal')
-plt.contourf(X[1760:3040,200:1480],Y[1760:3040,200:1480],dens[1760:3040,200:1480],cmap='RdYlBu')
+plt.contourf(X[1760:3040,200:1480],Y[1760:3040,200:1480],N*dens[1760:3040,200:1480],cmap='RdYlBu')
 plt.colorbar()
 plt.show()
 
