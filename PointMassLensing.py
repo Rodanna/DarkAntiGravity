@@ -16,9 +16,7 @@ rmax = 150
 res = 1280
 t = 0
 G = 6.67408e-11 #m^3/kgs^2
-rho2D = 0.01857756655504864
-norm = 1.124213809939389e+45*G #m/s^2
-
+c = 299792458 #m/s
 
 
 f = plt.imread('HUBBLE.jpg')/res
@@ -42,15 +40,13 @@ ff[6][600:610,600:620] = f[600:610,600:620]
 ff[7] = f
 
 
-
-z = np.array([9,1.8,2,5,2.1,7,6,3,8])
+z = np.array([6,3,2,4,3,5,3,4,4])
 u = np.linspace(-rmax,rmax,res)
 X,Y = np.meshgrid(u,u)
 
 Xgrad = -np.loadtxt('Xgrad.txt')
 Ygrad = -np.loadtxt('Ygrad.txt')
 potential = np.loadtxt('potential.txt')
-N = 0
 
 for i in range (0,len(ff)):
     x0 = y0 = 0
@@ -58,18 +54,19 @@ for i in range (0,len(ff)):
     Ds = Distances.angular(a0,asrc)
     Dds = Distances.angular(aL,asrc)
     Dd = Distances.angular(a0,aL)
-    N = 4*np.pi*Dd*Dds/(300000000**2*Ds)*norm #dimensionless
-    print(N)
+    N = 4*np.pi*G*Dd*Dds/(c*Ds) #(kg/m^2)^-1
     x,y = X-(Dds/Ds)*Xgrad*N, Y-(Dds/Ds)*Ygrad*N
     
-    tnodim = Ds/Dds*((x-x0)**2+(y-y0)**2)/2 + potential
+    tnodim = Ds/Dds*((x-x0)**2+(y-y0)**2)/2 + potential*N
     t = (1+z[i])*Ds*Dd/Dds*tnodim #arrival time surface in s 
     
     spline = RectBivariateSpline(u,u,ff[i].T)
     g = spline.ev(x,y)
+    plt.title('source image')
     plt.imshow(ff[i].T,origin='lower',extent=[-rmax,rmax,-rmax,rmax])
     plt.pause(1)
     plt.clf()
+    plt.title('lensed images')
     plt.imshow(g.T,origin='lower',extent=[-rmax,rmax,-rmax,rmax])
     plt.pause(1)
     plt.clf()

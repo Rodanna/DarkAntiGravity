@@ -38,8 +38,8 @@ for i in range (103,152):
 '''
 
 k = np.loadtxt('galaxy.txt')
-
 '''
+
 #circle
 for i in range(0,len(X)):
     for j in range(0,len(Y)):
@@ -48,26 +48,7 @@ for i in range(0,len(X)):
         if np.sqrt(mi**2+mj**2) <= 200:
             k[i][j] = dens
 '''
-'''
-#rectangle
-for i in range (55,200): 
-    for j in range(78,177):
-        k[i][j] = dens
-'''
-'''
-#diamond
-for i in range (58,157): 
-    for j in range(98,197):
-        if i <j:
-            k[i][j] = dens 
-'''
-'''
-#triangle
-for i in range (58,157): 
-    for j in range(58,157):
-        if i <j:
-            k[i][j] = dens  
-'''            
+ 
             
 plt.clf()
 plt.title('mass distribution')
@@ -77,8 +58,8 @@ plt.colorbar()
 plt.show()
 
 nr, root = np.loadtxt('roots.txt', unpack=True) #import bessel roots
-nr = nr[:100]
-root = root[:500]
+nr = nr[:400]
+root = root[:400]
 a = np.ones(len(nr),float)
 b = np.ones(len(nr),float)
 nr = [int(m) for m in nr]
