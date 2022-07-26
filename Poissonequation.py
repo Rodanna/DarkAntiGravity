@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 from scipy import special
 
 rmax = 150 #microradians
-res = 1280
+res = 360 #1280
 
 u = np.linspace(-rmax,rmax,res)
 X,Y = np.meshgrid(u,u) 
@@ -37,7 +37,7 @@ for i in range (103,152):
         k[i][j] = dens
 '''
 
-k = np.loadtxt('galaxy.txt')
+k = np.loadtxt('galaxy1.txt')
 '''
 
 #circle
@@ -58,8 +58,8 @@ plt.colorbar()
 plt.show()
 
 nr, root = np.loadtxt('roots.txt', unpack=True) #import bessel roots
-nr = nr[:400]
-root = root[:400]
+nr = nr[:]
+root = root[:]
 a = np.ones(len(nr),float)
 b = np.ones(len(nr),float)
 nr = [int(m) for m in nr]
@@ -84,9 +84,6 @@ for n in range(0,len(nr)): #coefficients of Fourier Bessel series
         a[n] = Ba/N0
         b[n] = Bb/N0
 
-np.savetxt('acoefficients.txt',a)
-np.savetxt('bcoefficients.txt',b)
-
 for i in range(0,len(nr)): #Fourier Bessel series with coefficients
     m = nr[i]
     alpha = root[i]
@@ -96,7 +93,7 @@ for i in range(0,len(nr)): #Fourier Bessel series with coefficients
     z += 2*(rmax/alpha)**2*special.jv(m,alpha*r/rmax)*angpart #microrad**2
     w += special.jv(m,alpha*r/rmax)*angpart 
 
-np.savetxt('potential.txt',z)
+np.savetxt('potential1.txt',z)
 
 plt.clf()
 plt.title('potential')
@@ -125,8 +122,8 @@ Xgrad = rgrad*X/r-phigrad*Y/r #microradian
 Ygrad = rgrad*Y/r+phigrad*X/r
 
 
-np.savetxt('Xgrad.txt',Xgrad)
-np.savetxt('Ygrad.txt', Ygrad)
+np.savetxt('Xgrad1.txt',Xgrad)
+np.savetxt('Ygrad1.txt', Ygrad)
 
 u = np.linspace(-rmax,rmax,res)
 X,Y = np.meshgrid(u,u)

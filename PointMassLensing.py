@@ -13,14 +13,14 @@ a0 = 1
 aL = 0.6
 steps = 1000
 rmax = 150
-res = 1280
+res = 360 #1280
 t = 0
 G = 6.67408e-11 #m^3/kgs^2
 c = 299792458 #m/s
 
 
 f = plt.imread('HUBBLE.jpg')/res
-f = f[:,:,0]
+f = f[460:820,460:820,0]
 ny,nx = f.shape
 
 ff = np.empty((8,nx,ny),float)
