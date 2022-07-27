@@ -13,18 +13,18 @@ a0 = 1
 aL = 0.6
 steps = 1000
 rmax = 150
-res = 360 #1280
+res = 1280
 t = 0
 G = 6.67408e-11 #m^3/kgs^2
 c = 299792458 #m/s
 
 
 f = plt.imread('HUBBLE.jpg')/res
-f = f[460:820,460:820,0]
+f = f[:,:,0]
 ny,nx = f.shape
 
-ff = np.empty((8,nx,ny),float)
 
+ff = np.empty((8,nx,ny),float)
 ff[0][630:680,640:690] = f[630:680,640:690]
 ff[1][600:650,500:520] = f[600:650,500:520]
 ff[2][500:550,700:750] = f[500:550,700:750]
@@ -40,13 +40,13 @@ ff[6][600:610,600:620] = f[600:610,600:620]
 ff[7] = f
 
 
-z = np.array([6,3,2,4,3,5,3,4,4])
+z = np.array([6,3,4,4,3,5,3,4,4])
 u = np.linspace(-rmax,rmax,res)
 X,Y = np.meshgrid(u,u)
 
-Xgrad = -np.loadtxt('Xgrad.txt')
-Ygrad = -np.loadtxt('Ygrad.txt')
-potential = np.loadtxt('potential.txt')
+Xgrad = -np.loadtxt('Xgrad2.txt')
+Ygrad = -np.loadtxt('Ygrad2.txt')
+potential = np.loadtxt('potential2.txt')
 
 for i in range (0,len(ff)):
     x0 = y0 = 0
@@ -54,10 +54,10 @@ for i in range (0,len(ff)):
     Ds = Distances.angular(a0,asrc)
     Dds = Distances.angular(aL,asrc)
     Dd = Distances.angular(a0,aL)
-    N = 4*np.pi*G*Dd*Dds/(c*Ds) #(kg/m^2)^-1
-    x,y = X-(Dds/Ds)*Xgrad*N, Y-(Dds/Ds)*Ygrad*N
+    critdens = 4*np.pi*G*Dd*Dds/(c*Ds) #(kg/m^2)^-1
+    x,y = X-(Dds/Ds)*Xgrad*critdens, Y-(Dds/Ds)*Ygrad*critdens
     
-    tnodim = Ds/Dds*((x-x0)**2+(y-y0)**2)/2 + potential*N
+    tnodim = Ds/Dds*((x-x0)**2+(y-y0)**2)/2 + potential*critdens
     t = (1+z[i])*Ds*Dd/Dds*tnodim #arrival time surface in s 
     
     spline = RectBivariateSpline(u,u,ff[i].T)
