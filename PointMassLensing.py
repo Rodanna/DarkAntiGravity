@@ -49,17 +49,13 @@ Ygrad = -np.loadtxt('Ygrad2.txt')
 potential = np.loadtxt('potential2.txt')
 
 for i in range (0,len(ff)):
-    x0 = y0 = 0
     asrc = Distances.scalefactor(z[i])
     Ds = Distances.angular(a0,asrc)
     Dds = Distances.angular(aL,asrc)
     Dd = Distances.angular(a0,aL)
     critdens = 4*np.pi*G*Dd*Dds/(c*Ds) #(kg/m^2)^-1
     x,y = X-(Dds/Ds)*Xgrad*critdens, Y-(Dds/Ds)*Ygrad*critdens
-    
-    tnodim = Ds/Dds*((x-x0)**2+(y-y0)**2)/2 + potential*critdens
-    t = (1+z[i])*Ds*Dd/Dds*tnodim #arrival time surface in s 
-    
+        
     spline = RectBivariateSpline(u,u,ff[i].T)
     g = spline.ev(x,y)
     plt.title('source image')
@@ -71,6 +67,9 @@ for i in range (0,len(ff)):
     plt.pause(1)
     plt.clf()
     
+    x0 = y0 = 0
+    tnodim = Ds/Dds*((x-x0)**2+(y-y0)**2)/2 + potential*critdens
+    t = (1+z[i])*Ds*Dd/Dds*tnodim #arrival time surface in s
     tmin = np.min(t)
     tmax = np.max(t)
     levs = np.linspace(tmin,tmin + (tmax-tmin)/5,20)

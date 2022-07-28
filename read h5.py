@@ -38,21 +38,22 @@ plt.show()
 
 for i in range(0,len(X)):
     for j in range(0,len(Y)):
-        mi = int(res/2) - i + 1965
-        mj = int(res/2) - j + 1353
-        if np.sqrt(mi**2+mj**2) > 50:
+        mi = int(res/2) - i - 1823
+        mj = int(res/2) - j - 1836
+        if np.sqrt(mi**2+mj**2) > 60:
             density[i,j] = 0
             
 
-a = 3915
-b = 3303
+a = 117
+b = 104
+c = 120
 
 plt.clf()
 plt.title('mass distribution')
 plt.gca().set_aspect('equal')
-plt.contourf(X[a:a+100,b:b+100],Y[a:a+100,b:b+100],density[a:a+100,b:b+100],cmap='RdYlBu')
+plt.contourf(X[a:a+c,b:b+c],Y[a:a+c,b:b+c],density[a:a+c,b:b+c],cmap='RdYlBu')
 plt.colorbar()
 plt.show()
 
 np.savetxt('totalgalaxy.txt',density)            
-np.savetxt('galaxy4.txt',density[a:a+100,b:b+100])
+np.savetxt('galaxy2.txt',density[a:a+c,b:b+c])

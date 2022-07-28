@@ -8,10 +8,9 @@ Created on Thu Mar 24 14:35:03 2022
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy import special
-from mpl_toolkits import mplot3d
 
 rmax = 150 #microradians
-res = 100 #1280
+res = 120 #1280
 critdens0 = 0.49823288405658067
 
 u = np.linspace(-rmax,rmax,res)
@@ -39,7 +38,7 @@ for i in range (103,152):
         k[i][j] = dens
 '''
 
-k = np.loadtxt('galaxy1.txt')
+k = np.loadtxt('galaxy2.txt')
 
 '''
 
@@ -70,6 +69,7 @@ ax.plot_surface(X, Y, k*critdens0, rstride=1, cstride=1,cmap='RdYlBu', edgecolor
 ax.set_xlabel('x in arcsec')
 ax.set_ylabel('y in arcsec')
 ax.set_zlabel('convergence')
+plt.show()
 
 nr, root = np.loadtxt('roots.txt', unpack=True) #import bessel roots
 nr = nr[:]
@@ -107,7 +107,7 @@ for i in range(0,len(nr)): #Fourier Bessel series with coefficients
     z += 2*(rmax/alpha)**2*special.jv(m,alpha*r/rmax)*angpart #microrad**2
     w += special.jv(m,alpha*r/rmax)*angpart 
 
-np.savetxt('potential1.txt',z)
+np.savetxt('potential2.txt',z)
 
 plt.clf()
 plt.title('potential')
@@ -141,8 +141,8 @@ Xgrad = rgrad*X/r-phigrad*Y/r #microradian
 Ygrad = rgrad*Y/r+phigrad*X/r
 
 
-np.savetxt('Xgrad1.txt',Xgrad)
-np.savetxt('Ygrad1.txt', Ygrad)
+np.savetxt('Xgrad2.txt',Xgrad)
+np.savetxt('Ygrad2.txt', Ygrad)
 
 u = np.linspace(-rmax,rmax,res)
 X,Y = np.meshgrid(u,u)

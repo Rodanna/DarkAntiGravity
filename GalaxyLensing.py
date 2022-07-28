@@ -10,23 +10,23 @@ from scipy.interpolate import RectBivariateSpline
 import Distances
 
 a0 = 1
-aL = 1/3
+aL = 0.6
 steps = 1000
 rmax = 150
-res = 100
+res = 120
 t = 0
 G = 6.67408e-11 #m^3/kgs^2
 c = 299792458 #m/s
-z = np.linspace(3,13,9)
+z = np.linspace(6,13,2)
 u = np.linspace(-rmax,rmax,res)
 X,Y = np.meshgrid(u,u)
 
-Xgrad = -np.loadtxt('Xgrad2.txt')
-Ygrad = -np.loadtxt('Ygrad2.txt')
-potential = np.loadtxt('potential2.txt')
+Xgrad = -np.loadtxt('Xgrad1.txt')
+Ygrad = -np.loadtxt('Ygrad1.txt')
+potential = np.loadtxt('potential1.txt')
 
 f = plt.imread('HUBBLE.jpg')/res
-f = f[:100,:100,0]
+f = f[:120,:120,0]
 
 for i in range(0,len(z)):
     asrc = Distances.scalefactor(z[i])
@@ -34,13 +34,12 @@ for i in range(0,len(z)):
     Dds = Distances.angular(aL,asrc)
     Dd = Distances.angular(a0,aL)
     critdens = 4*np.pi*G*Dd*Dds/(c*Ds) #(kg/m^2)^-1
-    critdens0 = 4*np.pi*G*Dd/(c)
     x,y = X-(Dds/Ds)*Xgrad*critdens, Y-(Dds/Ds)*Ygrad*critdens  
     
-    for k in range(0,3):
-        for t in range(0,3):
+    for k in range(0,10):
+        for t in range(0,10):
             f = f*0
-            f[49+k,49+t] = 1
+            f[55+k,55+t] = 1
             spline = RectBivariateSpline(u,u,f.T)
             g = spline.ev(x,y)
             plt.title('source image')
@@ -49,5 +48,18 @@ for i in range(0,len(z)):
             plt.clf()
             plt.title('lensed images')
             plt.imshow(g.T,origin='lower',extent=[-rmax,rmax,-rmax,rmax])
+            plt.pause(0.1)
+            plt.clf()
+            
+            x0 = -5 + k
+            y0 = -5 + t
+            tnodim = Ds/Dds*((x-x0)**2+(y-y0)**2)/2 + potential*critdens
+            t = (1+z[i])*Ds*Dd/Dds*tnodim #arrival time surface in s
+            tmin = np.min(t)
+            tmax = np.max(t)
+            levs = np.linspace(tmin,tmin + (tmax-tmin)/5,20)
+            plt.contour(Y,X,t,levels=levs)
+            plt.title('arrival time surface')
+            plt.gca().set_aspect('equal')
             plt.pause(0.1)
             plt.clf()
