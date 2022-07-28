@@ -44,12 +44,15 @@ for i in range(0,len(X)):
             density[i,j] = 0
             
 
+a = 3915
+b = 3303
+
 plt.clf()
 plt.title('mass distribution')
 plt.gca().set_aspect('equal')
-plt.contourf(X[3900:4000,3303:3403],Y[3900:4000,3303:3403],density[3900:4000,3303:3403],cmap='RdYlBu')
+plt.contourf(X[a:a+100,b:b+100],Y[a:a+100,b:b+100],density[a:a+100,b:b+100],cmap='RdYlBu')
 plt.colorbar()
 plt.show()
 
 np.savetxt('totalgalaxy.txt',density)            
-np.savetxt('galaxy4.txt',density[3900:4000,3303:3403])
+np.savetxt('galaxy4.txt',density[a:a+100,b:b+100])

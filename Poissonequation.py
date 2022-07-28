@@ -12,6 +12,7 @@ from mpl_toolkits import mplot3d
 
 rmax = 150 #microradians
 res = 100 #1280
+critdens0 = 0.49823288405658067
 
 u = np.linspace(-rmax,rmax,res)
 X,Y = np.meshgrid(u,u) 
@@ -38,7 +39,8 @@ for i in range (103,152):
         k[i][j] = dens
 '''
 
-k = np.loadtxt('galaxy2.txt')
+k = np.loadtxt('galaxy1.txt')
+
 '''
 
 #circle
@@ -49,14 +51,25 @@ for i in range(0,len(X)):
         if np.sqrt(mi**2+mj**2) <= 200:
             k[i][j] = dens
 '''
- 
-            
+levs = np.linspace(1,8,2)
+lev = np.linspace(0,12,20)
+           
 plt.clf()
-plt.title('mass distribution')
+plt.title('galaxy cluster 1')
 plt.gca().set_aspect('equal')
-plt.contourf(X,Y,k,cmap='RdYlBu')
+plt.contourf(X,Y,k*critdens0,levels = lev, cmap='RdYlBu')
 plt.colorbar()
+plt.contour(X,Y,k*critdens0,levels=levs,cmap='gist_gray',linewidths=0.75)
+plt.xlabel('x in arcsec')
+plt.ylabel('y in arcsec')
 plt.show()
+
+fig = plt.figure()
+ax = plt.axes(projection='3d')
+ax.plot_surface(X, Y, k*critdens0, rstride=1, cstride=1,cmap='RdYlBu', edgecolor='none')
+ax.set_xlabel('x in arcsec')
+ax.set_ylabel('y in arcsec')
+ax.set_zlabel('convergence')
 
 nr, root = np.loadtxt('roots.txt', unpack=True) #import bessel roots
 nr = nr[:]
@@ -94,7 +107,7 @@ for i in range(0,len(nr)): #Fourier Bessel series with coefficients
     z += 2*(rmax/alpha)**2*special.jv(m,alpha*r/rmax)*angpart #microrad**2
     w += special.jv(m,alpha*r/rmax)*angpart 
 
-np.savetxt('potential2.txt',z)
+np.savetxt('potential1.txt',z)
 
 plt.clf()
 plt.title('potential')
@@ -103,12 +116,17 @@ plt.contourf(X,Y,z,cmap='RdYlBu')
 plt.colorbar()
 plt.show()
 
+
 plt.clf()
-plt.title('reconstructed density')
+plt.title('galaxy cluster 1')
 plt.gca().set_aspect('equal')
-plt.contourf(X,Y,w,cmap='RdYlBu')
+plt.contourf(X,Y,w*critdens0,levels = lev, cmap='RdYlBu')
 plt.colorbar()
+plt.contour(X,Y,k*critdens0,levels=levs,cmap='gist_gray',linewidths=0.75)
+plt.xlabel('x in arcsec')
+plt.ylabel('y in arcsec')
 plt.show()
+
 
 rgrad = 0
 phigrad = 0
@@ -123,8 +141,8 @@ Xgrad = rgrad*X/r-phigrad*Y/r #microradian
 Ygrad = rgrad*Y/r+phigrad*X/r
 
 
-np.savetxt('Xgrad2.txt',Xgrad)
-np.savetxt('Ygrad2.txt', Ygrad)
+np.savetxt('Xgrad1.txt',Xgrad)
+np.savetxt('Ygrad1.txt', Ygrad)
 
 u = np.linspace(-rmax,rmax,res)
 X,Y = np.meshgrid(u,u)
@@ -142,10 +160,10 @@ plt.quiver(X[::5,::5],Y[::5,::5],Xgrad[::5,::5],Ygrad[::5,::5])
 plt.show()
 
 
-'''
+
 fig = plt.figure()
 ax = plt.axes(projection='3d')
-ax.plot_surface(X, Y, w, rstride=1, cstride=1,cmap='viridis', edgecolor='none')
-ax.set_xlabel('x')
-ax.set_ylabel('y')
-ax.set_zlabel('z')'''
+ax.plot_surface(X, Y, w*critdens0, rstride=1, cstride=1,cmap='RdYlBu', edgecolor='none')
+ax.set_xlabel('x in arcsec')
+ax.set_ylabel('y in arcsec')
+ax.set_zlabel('convergence')
