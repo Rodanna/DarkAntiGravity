@@ -17,7 +17,7 @@ res = 120
 t = 0
 G = 6.67408e-11 #m^3/kgs^2
 c = 299792458 #m/s
-z = np.linspace(6,13,2)
+z = np.linspace(6,13,8)
 u = np.linspace(-rmax,rmax,res)
 X,Y = np.meshgrid(u,u)
 
