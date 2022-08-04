@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 from scipy import special
 
 rmax = 150 #microradians
-res = 120 #1280
+res = 1280 #120
 critdens0 = 0.49823288405658067
 
 u = np.linspace(-rmax,rmax,res)
@@ -22,6 +22,7 @@ w = 0
 dens = 2 
 k = np.zeros((len(X),len(Y)),float) #dimensionless
 
+k[640][640] = 20
 
 '''
 #point mass distribution
@@ -37,11 +38,11 @@ for i in range (103,152):
     for j in range(103,152):
         k[i][j] = dens
 '''
-
+'''
 k = np.loadtxt('galaxy2.txt')
 
 '''
-
+'''
 #circle
 for i in range(0,len(X)):
     for j in range(0,len(Y)):
@@ -54,7 +55,7 @@ levs = np.linspace(1,8,2)
 lev = np.linspace(0,12,20)
            
 plt.clf()
-plt.title('galaxy cluster 1')
+plt.title('galaxy cluster')
 plt.gca().set_aspect('equal')
 plt.contourf(X,Y,k*critdens0,levels = lev, cmap='RdYlBu')
 plt.colorbar()
@@ -72,8 +73,8 @@ ax.set_zlabel('convergence')
 plt.show()
 
 nr, root = np.loadtxt('roots.txt', unpack=True) #import bessel roots
-nr = nr[:]
-root = root[:]
+nr = nr[:200]
+root = root[:200]
 a = np.ones(len(nr),float)
 b = np.ones(len(nr),float)
 nr = [int(m) for m in nr]
@@ -105,9 +106,9 @@ for i in range(0,len(nr)): #Fourier Bessel series with coefficients
     if m > 0:
         angpart += b[i]*np.sin(m*phi)
     z += 2*(rmax/alpha)**2*special.jv(m,alpha*r/rmax)*angpart #microrad**2
-    w += special.jv(m,alpha*r/rmax)*angpart 
+    w += special.jv(m,alpha*r/rmax)*angpart
 
-np.savetxt('potential2.txt',z)
+np.savetxt('potential.txt',z)
 
 plt.clf()
 plt.title('potential')
@@ -118,7 +119,7 @@ plt.show()
 
 
 plt.clf()
-plt.title('galaxy cluster 1')
+plt.title('galaxy cluster')
 plt.gca().set_aspect('equal')
 plt.contourf(X,Y,w*critdens0,levels = lev, cmap='RdYlBu')
 plt.colorbar()
@@ -141,8 +142,8 @@ Xgrad = rgrad*X/r-phigrad*Y/r #microradian
 Ygrad = rgrad*Y/r+phigrad*X/r
 
 
-np.savetxt('Xgrad2.txt',Xgrad)
-np.savetxt('Ygrad2.txt', Ygrad)
+np.savetxt('Xgrad.txt',Xgrad)
+np.savetxt('Ygrad.txt', Ygrad)
 
 u = np.linspace(-rmax,rmax,res)
 X,Y = np.meshgrid(u,u)

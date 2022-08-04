@@ -11,6 +11,7 @@ import Distances
 
 a0 = 1
 aL = 0.6
+zL = 1/aL-1
 steps = 1000
 rmax = 150
 res = 1280
@@ -44,9 +45,9 @@ z = np.array([6,3,4,4,3,5,3,4,4])
 u = np.linspace(-rmax,rmax,res)
 X,Y = np.meshgrid(u,u)
 
-Xgrad = -np.loadtxt('Xgrad2.txt')
-Ygrad = -np.loadtxt('Ygrad2.txt')
-potential = np.loadtxt('potential2.txt')
+Xgrad = -np.loadtxt('Xgrad.txt')*10000
+Ygrad = -np.loadtxt('Ygrad.txt')*10000
+potential = np.loadtxt('potential.txt')*10000
 
 for i in range (0,len(ff)):
     asrc = Distances.scalefactor(z[i])
@@ -69,7 +70,7 @@ for i in range (0,len(ff)):
     
     x0 = y0 = 0
     tnodim = Ds/Dds*((x-x0)**2+(y-y0)**2)/2 + potential*critdens
-    t = (1+z[i])*Ds*Dd/Dds*tnodim #arrival time surface in s
+    t = (1+zL)*Ds*Dd/Dds*tnodim #arrival time surface in s
     tmin = np.min(t)
     tmax = np.max(t)
     levs = np.linspace(tmin,tmin + (tmax-tmin)/5,20)

@@ -11,6 +11,7 @@ import Distances
 
 a0 = 1
 aL = 0.6
+zL = 1/aL-1
 steps = 1000
 rmax = 150
 res = 120
@@ -51,13 +52,13 @@ for i in range(0,len(z)):
             plt.pause(0.1)
             plt.clf()
             
-            x0 = -5 + k
-            y0 = -5 + t
-            tnodim = Ds/Dds*((x-x0)**2+(y-y0)**2)/2 + potential*critdens
-            t = (1+z[i])*Ds*Dd/Dds*tnodim #arrival time surface in s
+            x0 = -5 + t
+            y0 = -5 + k
+            tnodim = (Ds/Dds)**2*((x-x0)**2 + (y-y0)**2)/2 + potential*critdens
+            t = (1+zL)*Ds*Dd/Dds*tnodim #arrival time surface in s
             tmin = np.min(t)
             tmax = np.max(t)
-            levs = np.linspace(tmin,tmin + (tmax-tmin)/5,20)
+            levs = np.linspace(tmin,tmin + (tmax-tmin)/5,40)
             plt.contour(Y,X,t,levels=levs)
             plt.title('arrival time surface')
             plt.gca().set_aspect('equal')
