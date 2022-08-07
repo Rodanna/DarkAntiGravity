@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 from scipy import special
 
 rmax = 150 #microradians
-res = 1280 #120
+res = 120 #1280
 critdens0 = 0.49823288405658067
 
 u = np.linspace(-rmax,rmax,res)
@@ -20,9 +20,10 @@ phi = np.arctan2(Y,X)
 z = 0
 w = 0
 dens = 2 
+Dd = 1.495717907193709e+17
 k = np.zeros((len(X),len(Y)),float) #dimensionless
 
-k[640][640] = 20
+#k[640][640] = 20
 
 '''
 #point mass distribution
@@ -38,10 +39,10 @@ for i in range (103,152):
     for j in range(103,152):
         k[i][j] = dens
 '''
-'''
+
 k = np.loadtxt('galaxy2.txt')
 
-'''
+
 '''
 #circle
 for i in range(0,len(X)):
@@ -88,8 +89,8 @@ for n in range(0,len(nr)): #coefficients of Fourier Bessel series
     if m == 0:
         N0 = N*2 
     bess = special.jv(m,alpha/rmax*r)
-    fnc = bess*np.cos(m*phi)
-    fns = bess*np.sin(m*phi)
+    fnc = bess*np.cos(Dd*m*phi)
+    fns = bess*np.sin(Dd*m*phi)
     Ba = area * np.sum(k*fnc) #microrad**2 (integral over pixel)
     Bb = area * np.sum(k*fns)
     if m != 0:
@@ -108,7 +109,7 @@ for i in range(0,len(nr)): #Fourier Bessel series with coefficients
     z += 2*(rmax/alpha)**2*special.jv(m,alpha*r/rmax)*angpart #microrad**2
     w += special.jv(m,alpha*r/rmax)*angpart
 
-np.savetxt('potential.txt',z)
+np.savetxt('potential2.txt',z)
 
 plt.clf()
 plt.title('potential')
@@ -142,8 +143,8 @@ Xgrad = rgrad*X/r-phigrad*Y/r #microradian
 Ygrad = rgrad*Y/r+phigrad*X/r
 
 
-np.savetxt('Xgrad.txt',Xgrad)
-np.savetxt('Ygrad.txt', Ygrad)
+np.savetxt('Xgrad2.txt',Xgrad)
+np.savetxt('Ygrad2.txt', Ygrad)
 
 u = np.linspace(-rmax,rmax,res)
 X,Y = np.meshgrid(u,u)

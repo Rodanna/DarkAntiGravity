@@ -22,9 +22,9 @@ z = np.linspace(6,13,8)
 u = np.linspace(-rmax,rmax,res)
 X,Y = np.meshgrid(u,u)
 
-Xgrad = -np.loadtxt('Xgrad1.txt')
-Ygrad = -np.loadtxt('Ygrad1.txt')
-potential = np.loadtxt('potential1.txt')
+Xgrad = -np.loadtxt('Xgrad2.txt')
+Ygrad = -np.loadtxt('Ygrad2.txt')
+potential = np.loadtxt('potential2.txt')
 
 f = plt.imread('HUBBLE.jpg')/res
 f = f[:120,:120,0]
@@ -54,11 +54,11 @@ for i in range(0,len(z)):
             
             x0 = -5 + t
             y0 = -5 + k
-            tnodim = (Ds/Dds)**2*((x-x0)**2 + (y-y0)**2)/2 + potential*critdens
-            t = (1+zL)*Ds*Dd/Dds*tnodim #arrival time surface in s
+            tnodim = ((x-x0)**2 + (y-y0)**2)/2 + potential*critdens*Dds/Ds
+            t = (1+zL)*Ds*Dd/Dd*tnodim #arrival time surface in s
             tmin = np.min(t)
             tmax = np.max(t)
-            levs = np.linspace(tmin,tmin + (tmax-tmin)/5,40)
+            levs = np.linspace(tmin,tmin + (tmax-tmin)/5,50)
             plt.contour(Y,X,t,levels=levs)
             plt.title('arrival time surface')
             plt.gca().set_aspect('equal')

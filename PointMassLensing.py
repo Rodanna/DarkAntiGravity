@@ -69,7 +69,7 @@ for i in range (0,len(ff)):
     plt.clf()
     
     x0 = y0 = 0
-    tnodim = Ds/Dds*((x-x0)**2+(y-y0)**2)/2 + potential*critdens
+    tnodim = ((x-x0)**2+(y-y0)**2)/2 + potential*critdens*Dds/Ds
     t = (1+zL)*Ds*Dd/Dds*tnodim #arrival time surface in s
     tmin = np.min(t)
     tmax = np.max(t)
