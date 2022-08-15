@@ -35,6 +35,7 @@ for i in range(0,len(z)):
     Dds = Distances.angular(aL,asrc)
     Dd = Distances.angular(a0,aL)
     critdens = 4*np.pi*G*Dd*Dds/(c*Ds) #(kg/m^2)^-1
+    critdens = 1/3
     x,y = X-(Dds/Ds)*Xgrad*critdens, Y-(Dds/Ds)*Ygrad*critdens  
     
     for k in range(0,10):

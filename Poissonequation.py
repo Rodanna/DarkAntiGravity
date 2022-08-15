@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 from scipy import special
 
 rmax = 150 #microradians
-res = 120 #1280
+res = 256 #1280 #120
 critdens0 = 0.49823288405658067
 
 u = np.linspace(-rmax,rmax,res)
@@ -19,19 +19,19 @@ r = np.sqrt(X**2+Y**2)
 phi = np.arctan2(Y,X)
 z = 0
 w = 0
-dens = 2 
+dens = 8 
 Dd = 1.495717907193709e+17
 k = np.zeros((len(X),len(Y)),float) #dimensionless
 
 #k[640][640] = 20
 
-'''
+
 #point mass distribution
 p1 = np.array([94,96,99,212,180,150,110,120,150,89,3,120,130,98,130,167,29,130,111,98,176,1,150,88,133,70])
 p2 = np.array([116,69,230,144,230,120,120,155,90,5,90,170,160,78,129,130,180,67,130,110,120,70,189,10,110,167])
 for i in range(0,23):
     k[p1[i]][p2[i]] = dens
-'''
+
 
 '''
 #square
@@ -39,9 +39,9 @@ for i in range (103,152):
     for j in range(103,152):
         k[i][j] = dens
 '''
-
+'''
 k = np.loadtxt('galaxy2.txt')
-
+'''
 
 '''
 #circle
@@ -74,8 +74,8 @@ ax.set_zlabel('convergence')
 plt.show()
 
 nr, root = np.loadtxt('roots.txt', unpack=True) #import bessel roots
-nr = nr[:200]
-root = root[:200]
+nr = nr[:]
+root = root[:]
 a = np.ones(len(nr),float)
 b = np.ones(len(nr),float)
 nr = [int(m) for m in nr]
@@ -109,7 +109,7 @@ for i in range(0,len(nr)): #Fourier Bessel series with coefficients
     z += 2*(rmax/alpha)**2*special.jv(m,alpha*r/rmax)*angpart #microrad**2
     w += special.jv(m,alpha*r/rmax)*angpart
 
-np.savetxt('potential2.txt',z)
+np.savetxt('potential.txt',z)
 
 plt.clf()
 plt.title('potential')
@@ -143,8 +143,8 @@ Xgrad = rgrad*X/r-phigrad*Y/r #microradian
 Ygrad = rgrad*Y/r+phigrad*X/r
 
 
-np.savetxt('Xgrad2.txt',Xgrad)
-np.savetxt('Ygrad2.txt', Ygrad)
+np.savetxt('Xgrad.txt',Xgrad)
+np.savetxt('Ygrad.txt', Ygrad)
 
 u = np.linspace(-rmax,rmax,res)
 X,Y = np.meshgrid(u,u)
