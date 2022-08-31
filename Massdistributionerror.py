@@ -10,11 +10,13 @@ import matplotlib.pyplot as plt
 
 rmax = 150 #microradians
 res = 120
+invcritdens0 = 0.49823288405658067 #(kg/m^2)^-1
 u = np.linspace(-rmax,rmax,res)
 X,Y = np.meshgrid(u,u)
 r = np.sqrt(X**2+Y**2) 
 phi = np.arctan2(Y,X)
-lev = np.linspace(0,12,20)
+lev = np.linspace(0,1,20)
+levs = np.linspace(1,8,2)
 
 galaxy = np.loadtxt('galaxy2.txt')
 for k in range(0,len(X)):
@@ -41,17 +43,30 @@ error1d  = np.zeros(42)
 
 for i in range (0,42):
     plt.clf()
-    plt.title('galaxy cluster')
+    plt.title('total mass difference')
     plt.gca().set_aspect('equal')
-    plt.contourf(X,Y,error[i,:,:],levels = lev, cmap='RdYlBu') 
+    plt.contourf(X,Y,error[i,:,:]*invcritdens0,levels = lev, cmap='Reds') 
     plt.colorbar()
+    plt.contour(X,Y,galaxy*invcritdens0,levels=levs,cmap='gist_gray',linewidths=1)
     plt.xlabel('x in microradians')
     plt.ylabel('y in microradians')
     plt.show()
-    error1d[i] = np.mean(error[i])
+    error1d[i] = np.mean(error[i,:,:])
 
 x = np.arange(0,42)
 
 plt.figure()
-plt.plot(x,error1d,'o')
+plt.grid()
+plt.plot(x,error1d,'.')
 plt.show()
+
+for i in range (0,42):
+    plt.clf()
+    plt.title('fractional mass difference')
+    plt.gca().set_aspect('equal')
+    plt.contourf(X,Y,error[i,:,:]*invcritdens0/galaxy,levels = lev, cmap='Reds') 
+    plt.colorbar()
+    plt.contour(X,Y,galaxy*invcritdens0,levels=levs,cmap='gist_gray',linewidths=1)
+    plt.xlabel('x in microradians')
+    plt.ylabel('y in microradians')
+    plt.show()
