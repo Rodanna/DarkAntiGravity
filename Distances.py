@@ -4,11 +4,9 @@ Created on Tue Feb 22 11:30:27 2022
 
 @author: Anna Rodriguez
 """
-
 import numpy as np
-import matplotlib.pyplot as plt
 
-c = 2.99792458e8 # m/s
+c = 299792458 # m/s
 pc = 1/np.tan(4.848*10**(-6))*1.495978707*10**11/c # cs
 Mpc = pc*1e6 # cs
 H0 = 69.32/Mpc*1000/c # 1/s 
@@ -47,21 +45,13 @@ def lighttravel(a0,a1):
 def angular(a0,a1):
     com = comoving(a0,a1)
     z = redshift(a1)
-    return com/(1+z)
+    return com/(1+z) # cs
 
 def luminosity(a0,a1):
     com = comoving(a0,a1)
     z = redshift(a1)
-    return com*(1+z)
+    return com*(1+z) # cs
     
-
-'''plt.figure()
-plt.grid(False)
-plt.plot(a,H(a))
-plt.xlabel('scale factor a')
-plt.ylabel('Hubble parameter H')
-plt.show()'''
-
 
 #print('The comoving distance is:',comoving(a),'cs')
 #print('The angular diameter distance is:',angular(a)[0],'cs')

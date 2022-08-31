@@ -12,7 +12,6 @@ import math
 a0 = 1
 aL = 0.6
 zL = 1/aL-1
-steps = 1000
 rmax = 150
 res = 500
 G = 6.67408e-11 #m^3/kgs^2
@@ -21,24 +20,26 @@ z = np.linspace(9,13,8)
 u = np.linspace(-rmax,rmax,res)
 X,Y = np.meshgrid(u,u)
 
-Xgrad = -np.loadtxt('Xgrad2_256.txt')
-Ygrad = -np.loadtxt('Ygrad2_256.txt')
-potential = np.loadtxt('potential2_256.txt')
+Xgrad = -np.loadtxt('Xgrad2_500.txt')
+Ygrad = -np.loadtxt('Ygrad2_500.txt')
+potential = np.loadtxt('potential2_500.txt')
 
 hf = plt.imread('HUBBLE.jpg')
-hf = hf[1050:1154,251:355,0]
+#hf = hf[1050:1154,251:355,0]
+hf = hf[626:651,497:521,0]
+#hf = plt.imread('cutout2.jpg')[:,:,0]
 f = 0*X
-xshape1 = int(np.shape(hf)[0]/2) #round down
-xshape2 = int(math.ceil(np.shape(hf)[0]/2)) #round up
-yshape1 = int(np.shape(hf)[1]/2)
-yshape2 = int(math.ceil(np.shape(hf)[1]/2))
+yshape1 = int(np.shape(hf)[0]/2) #round down
+yshape2 = int(math.ceil(np.shape(hf)[0]/2)) #round up
+xshape1 = int(np.shape(hf)[1]/2)
+xshape2 = int(math.ceil(np.shape(hf)[1]/2))
 x0 = 3
 y0 = -3
 xdisp = res//2 + x0
 ydisp = res//2 + y0
 
 f[ydisp-yshape1:ydisp+yshape2,xdisp-xshape1:xdisp+xshape2] = hf
-plt.imshow(f)
+plt.imshow(f.T)
 plt.show()
 
 for i in range(0,len(z)):
@@ -67,7 +68,7 @@ for i in range(0,len(z)):
     tmax = np.max(tau)
     levs = np.linspace(tmin,tmin + (tmax-tmin)/5,50)
     cs = plt.contour(Y,X,tau,levels=levs)
-    #plt.colorbar(cs)
+    plt.colorbar(cs)
     plt.title('arrival time surface')
     plt.gca().set_aspect('equal')
     plt.pause(0.1)

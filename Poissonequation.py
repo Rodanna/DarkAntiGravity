@@ -11,7 +11,7 @@ from scipy import special
 
 rmax = 150 #microradians
 res = 120
-critdens0 = 0.49823288405658067
+invcritdens0 = 0.49823288405658067 #(kg/m^2)^-1
 
 u = np.linspace(-rmax,rmax,res)
 X,Y = np.meshgrid(u,u) 
@@ -39,24 +39,24 @@ lev = np.linspace(0,12,20)
 plt.clf()
 plt.title('galaxy cluster')
 plt.gca().set_aspect('equal')
-plt.contourf(X,Y,dens*critdens0,levels = lev, cmap='RdYlBu')
+plt.contourf(X,Y,dens*invcritdens0,levels = lev, cmap='RdYlBu')
 plt.colorbar()
-plt.contour(X,Y,dens*critdens0,levels=levs,cmap='gist_gray',linewidths=0.75)
+plt.contour(X,Y,dens*invcritdens0,levels=levs,cmap='gist_gray',linewidths=0.75)
 plt.xlabel('x in microradians')
 plt.ylabel('y in microradians')
 plt.show()
 
 fig = plt.figure()
 ax = plt.axes(projection='3d')
-ax.plot_surface(X, Y, dens*critdens0, rstride=1, cstride=1,cmap='RdYlBu', edgecolor='none')
+ax.plot_surface(X, Y, dens*invcritdens0, rstride=1, cstride=1,cmap='RdYlBu', edgecolor='none')
 ax.set_xlabel('x in microradians')
 ax.set_ylabel('y in microradians')
 ax.set_zlabel('convergence')
 plt.show()
 
 nr, root = np.loadtxt('roots.txt', unpack=True) #import bessel roots
-nr = nr[:500]
-root = root[:500]
+nr = nr[:]
+root = root[:]
 a = np.ones(len(nr),float)
 b = np.ones(len(nr),float)
 nr = [int(m) for m in nr]
@@ -80,12 +80,14 @@ for n in range(0,len(nr)): #coefficients of Fourier Bessel series
     else: 
         a[n] = Ba/N0
         b[n] = Bb/N0
+    print(n)
 
 res2 = 500
 u = np.linspace(-rmax,rmax,res2)
 X,Y = np.meshgrid(u,u) 
 r = np.sqrt(X**2+Y**2) 
 phi = np.arctan2(Y,X)
+
 
 for i in range(0,len(nr)): #Fourier Bessel series with coefficients
     m = nr[i]
@@ -95,8 +97,10 @@ for i in range(0,len(nr)): #Fourier Bessel series with coefficients
         angpart += b[i]*np.sin(m*phi)
     pot += 2*(rmax/alpha)**2*special.jv(m,alpha*r/rmax)*angpart #microrad**2*kg/m´2
     fit += special.jv(m,alpha*r/rmax)*angpart  #kg/m^2
+    print(i)
 
-np.savetxt('potential2_256.txt',pot)
+np.savetxt('potential2_500.txt',pot)
+np.savetxt('fit2_500.txt',fit)
 
 plt.clf()
 plt.title('potential')
@@ -108,12 +112,21 @@ plt.show()
 plt.clf()
 plt.title('galaxy cluster')
 plt.gca().set_aspect('equal')
-plt.contourf(X,Y,fit*critdens0,levels = lev, cmap='RdYlBu')
+plt.contourf(X,Y,fit*invcritdens0,levels = lev, cmap='RdYlBu')
 plt.colorbar()
-plt.contour(X,Y,fit*critdens0,levels=levs,cmap='gist_gray',linewidths=0.75)
+plt.contour(X,Y,fit*invcritdens0,levels=levs,cmap='gist_gray',linewidths=0.75)
 plt.xlabel('x in microradians')
 plt.ylabel('y in microradians')
 plt.show()
+
+fig = plt.figure()
+ax = plt.axes(projection='3d')
+ax.plot_surface(X, Y, fit*invcritdens0, rstride=1, cstride=1,cmap='RdYlBu', edgecolor='none')
+ax.set_xlabel('x in microradians')
+ax.set_ylabel('y in microradians')
+ax.set_zlabel('convergence')
+plt.show()
+
 
 rgrad = 0
 phigrad = 0
@@ -123,12 +136,13 @@ for i in range(0,len(nr)):
     alpha = root[i] #microrad
     rgrad += 2*(rmax/alpha)**2*(b[i]*np.sin(m*phi)+a[i]*np.cos(m*phi))*(alpha/rmax)*special.jvp(m,r*alpha/rmax,n=1)
     phigrad += 2*(rmax/alpha)**2*(b[i]*m*np.cos(m*phi)-a[i]*m*np.sin(m*phi))*special.jv(m,r*alpha/rmax)/r
+    print(i)
 
 Xgrad = rgrad*X/r-phigrad*Y/r #microradian*kg/m^2
 Ygrad = rgrad*Y/r+phigrad*X/r
 
-np.savetxt('Xgrad2_256.txt',Xgrad)
-np.savetxt('Ygrad2_256.txt', Ygrad)
+np.savetxt('Xgrad2_500.txt', Xgrad)
+np.savetxt('Ygrad2_500.txt', Ygrad)
 
 plt.contour(X,Y,Xgrad)
 plt.title('Xgrad')
@@ -142,10 +156,3 @@ plt.gca().set_aspect('equal')
 plt.quiver(X[::5,::5],Y[::5,::5],Xgrad[::5,::5],Ygrad[::5,::5])
 plt.show()
 
-fig = plt.figure()
-ax = plt.axes(projection='3d')
-ax.plot_surface(X, Y, fit*critdens0, rstride=1, cstride=1,cmap='RdYlBu', edgecolor='none')
-ax.set_xlabel('x in microradians')
-ax.set_ylabel('y in microradians')
-ax.set_zlabel('convergence')
-plt.show()
