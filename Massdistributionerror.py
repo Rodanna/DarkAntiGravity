@@ -7,6 +7,7 @@ Created on Wed Aug 24 12:11:34 2022
 
 import numpy as np
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 rmax = 150 #microradians
 res = 120
@@ -28,6 +29,8 @@ for k in range(0,len(X)):
             
 fit = np.zeros((42,120,120))
 error = np.zeros((42,120,120))
+massdispersion = np.zeros((42,120,120))
+
 
 for i in range (0,42):
     fit[i,:,:] = np.loadtxt(f'fit2_120(nr={(i+1)*50}).txt')
@@ -38,6 +41,7 @@ for i in range (0,42):
             if np.sqrt(mk**2+ml**2) > 60:
                 fit[i,k,l] = 0
     error[i,:,:] = galaxy - fit[i,:,:]
+
 
 error1d  = np.zeros(42)
 
@@ -60,6 +64,8 @@ plt.grid()
 plt.plot(x,error1d,'.')
 plt.show()
 
+array = np.linspace(0,1,10)
+
 for i in range (0,42):
     plt.clf()
     plt.title('fractional mass difference')
@@ -69,4 +75,12 @@ for i in range (0,42):
     plt.contour(X,Y,galaxy*invcritdens0,levels=levs,cmap='gist_gray',linewidths=1)
     plt.xlabel('x in microradians')
     plt.ylabel('y in microradians')
+    plt.show()
+
+
+for i in range (0,42):
+    plt.figure()
+    plt.title('normalized fracctional mass error count')
+    plt.hist(np.abs(error[i,:,:])/galaxy)
+    sns.distplot(np.abs(error[i,:,:])/galaxy)
     plt.show()
