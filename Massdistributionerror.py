@@ -47,11 +47,11 @@ for i in range (0,42):
             if np.sqrt(mk**2+ml**2) > 60:
                 fit[i,k,l] = 0
     error[i,:,:] = galaxy - fit[i,:,:]
-'''
+
 error1d = np.zeros(42)
 for i in range (0,42):
     plt.clf()
-    plt.title('total mass difference')
+    plt.title(f'total mass difference for n = {(i+1)*50} Bessel roots')
     plt.gca().set_aspect('equal')
     plt.contourf(X,Y,error[i,:,:]*invcritdens0,levels = lev, cmap='Reds') 
     plt.colorbar()
@@ -64,17 +64,18 @@ for i in range (0,42):
 x = np.arange(0,42)
 
 plt.figure()
+plt.title('Mean mass error in dependence of number of Bessel roots')
 plt.grid()
 plt.plot(x,error1d,'.')
 plt.xlabel('number of bessel roots')
-plt.ylabel('normalized mass error')
+plt.ylabel('mass error')
 plt.show()
 
 array = np.linspace(0,1,10)
 
 for i in range (0,42):
     plt.clf()
-    plt.title('fractional mass difference')
+    plt.title(f'fractional mass difference for n = {(i+1)*50} Bessel roots')
     plt.gca().set_aspect('equal')
     plt.contourf(X,Y,foo(error[i,:,:]*invcritdens0,galaxy),levels = lev, cmap='Reds') 
     plt.colorbar()
@@ -82,13 +83,16 @@ for i in range (0,42):
     plt.xlabel('x in microradians')
     plt.ylabel('y in microradians')
     plt.show()
-'''
 
-    
-for i in range (0,42):
+
+numbers = np.array([10,12,30,40])
+plt.figure() 
+plt.grid()   
+for i in numbers:
     err = (foo(error[i,:,:],galaxy)).flatten()
-    plt.figure()
-    plt.title('mass error count')
-    plt.hist(err,bins = 50)
-    #sns.distplot(err,hist_kws=dict(edgecolor="w", linewidth=6))
-    plt.show()
+    plt.title('Fractional mass difference in dependence of number of Bessel roots')
+    plt.hist(err,bins = 100,histtype='step',label=f'{(i+1)*50}')
+plt.xlabel('fractional mass error')
+plt.ylabel('mass error count')
+plt.legend()
+plt.show()
