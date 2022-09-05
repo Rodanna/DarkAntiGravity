@@ -9,6 +9,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+def foo(x,y):
+    try:
+        return x/y
+    except ZeroDivisionError:
+        return 0
+    
 rmax = 150 #microradians
 res = 120
 invcritdens0 = 0.49823288405658067 #(kg/m^2)^-1
@@ -41,17 +47,15 @@ for i in range (0,42):
             if np.sqrt(mk**2+ml**2) > 60:
                 fit[i,k,l] = 0
     error[i,:,:] = galaxy - fit[i,:,:]
-
-
-error1d  = np.zeros(42)
-
+'''
+error1d = np.zeros(42)
 for i in range (0,42):
     plt.clf()
     plt.title('total mass difference')
     plt.gca().set_aspect('equal')
     plt.contourf(X,Y,error[i,:,:]*invcritdens0,levels = lev, cmap='Reds') 
     plt.colorbar()
-    plt.contour(X,Y,galaxy*invcritdens0,levels=levs,cmap='gist_gray',linewidths=1)
+    plt.contour(X,Y,galaxy*invcritdens0,levels=levs,cmap='gist_gray',linewidths=0.5)
     plt.xlabel('x in microradians')
     plt.ylabel('y in microradians')
     plt.show()
@@ -62,6 +66,8 @@ x = np.arange(0,42)
 plt.figure()
 plt.grid()
 plt.plot(x,error1d,'.')
+plt.xlabel('number of bessel roots')
+plt.ylabel('normalized mass error')
 plt.show()
 
 array = np.linspace(0,1,10)
@@ -70,17 +76,19 @@ for i in range (0,42):
     plt.clf()
     plt.title('fractional mass difference')
     plt.gca().set_aspect('equal')
-    plt.contourf(X,Y,error[i,:,:]*invcritdens0/galaxy,levels = lev, cmap='Reds') 
+    plt.contourf(X,Y,foo(error[i,:,:]*invcritdens0,galaxy),levels = lev, cmap='Reds') 
     plt.colorbar()
-    plt.contour(X,Y,galaxy*invcritdens0,levels=levs,cmap='gist_gray',linewidths=1)
+    plt.contour(X,Y,galaxy*invcritdens0,levels=levs,cmap='gist_gray',linewidths=0.5)
     plt.xlabel('x in microradians')
     plt.ylabel('y in microradians')
     plt.show()
+'''
 
-
+    
 for i in range (0,42):
+    err = (foo(error[i,:,:],galaxy)).flatten()
     plt.figure()
-    plt.title('normalized fracctional mass error count')
-    plt.hist(np.abs(error[i,:,:])/galaxy)
-    sns.distplot(np.abs(error[i,:,:])/galaxy)
+    plt.title('mass error count')
+    plt.hist(err,bins = 50)
+    #sns.distplot(err,hist_kws=dict(edgecolor="w", linewidth=6))
     plt.show()
