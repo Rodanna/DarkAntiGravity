@@ -26,8 +26,7 @@ potential = np.loadtxt('potential2_500.txt')
 
 f = plt.imread('HUBBLE.jpg')
 f = f[:res,:res,0]
-index1 = np.array([7])
-index2 = np.array([7])
+index = np.array([7]) #index = np.array([3,7])
 timedelay = []
 
 
@@ -40,8 +39,8 @@ for i in range(0,len(zL)):
     Dd = Distances.angular(a0,aL[i])
     critdens = (c*Ds)/(4*np.pi*G*Dd*Dds) #kg/m^2
     x,y = X-(Dds/Ds)*Xgrad/critdens, Y-(Dds/Ds)*Ygrad/critdens  
-    for k in index1:
-        for t in index2:
+    for k in index:
+        for t in index:
             f = f*0
             f[55+k,55+t] = 1
             x0 = -5 + t
@@ -203,5 +202,5 @@ HubbleA = np.asarray(Hubble)
 plt.figure()
 plt.title('Hubble Parameter in ')
 plt.grid()
-plt.hist(HubbleA, bins = 20,rwidth = 0.25)
+plt.hist(HubbleA, bins = 20,rwidth = 0.1)
 plt.show()
