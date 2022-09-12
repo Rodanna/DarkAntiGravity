@@ -7,7 +7,6 @@ Created on Wed Aug 24 12:11:34 2022
 
 import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sns
 
 def foo(x,y):
     try:
@@ -51,48 +50,52 @@ for i in range (0,42):
 error1d = np.zeros(42)
 for i in range (0,42):
     plt.clf()
-    plt.title(f'total mass difference for n = {(i+1)*50} Bessel roots')
+    plt.title(f'nr = {(i+1)*50}')
     plt.gca().set_aspect('equal')
     plt.contourf(X,Y,error[i,:,:]*invcritdens0,levels = lev, cmap='Reds') 
     plt.colorbar()
     plt.contour(X,Y,galaxy*invcritdens0,levels=levs,cmap='gist_gray',linewidths=0.5)
     plt.xlabel('x in microradians')
     plt.ylabel('y in microradians')
+    plt.savefig(f'total{(i+1)*50}.png')
     plt.show()
     error1d[i] = np.mean(error[i,:,:])
 
 x = np.arange(0,42)
 
 plt.figure()
-plt.title('Mean mass error in dependence of number of Bessel roots')
+#plt.title('Mean mass error in dependence of number of Bessel roots')
 plt.grid()
-plt.plot(x,error1d,'.')
+plt.plot(x,error1d/error1d[0],'b+')
 plt.xlabel('number of bessel roots')
-plt.ylabel('mass error')
+plt.ylabel('Normalized Mass Error')
+plt.savefig('Meanmaasserror.png')
 plt.show()
 
 array = np.linspace(0,1,10)
 
 for i in range (0,42):
     plt.clf()
-    plt.title(f'fractional mass difference for n = {(i+1)*50} Bessel roots')
+    plt.title(f'nr = {(i+1)*50}')
     plt.gca().set_aspect('equal')
     plt.contourf(X,Y,foo(error[i,:,:]*invcritdens0,galaxy),levels = lev, cmap='Reds') 
     plt.colorbar()
     plt.contour(X,Y,galaxy*invcritdens0,levels=levs,cmap='gist_gray',linewidths=0.5)
     plt.xlabel('x in microradians')
     plt.ylabel('y in microradians')
+    plt.savefig(f'fractional{(i+1)*50}.png')
     plt.show()
 
 
-numbers = np.array([10,12,30,40])
+numbers = np.array([0,4,10,30,41])
 plt.figure() 
 plt.grid()   
 for i in numbers:
     err = (foo(error[i,:,:],galaxy)).flatten()
-    plt.title('Fractional mass difference in dependence of number of Bessel roots')
-    plt.hist(err,bins = 100,histtype='step',label=f'{(i+1)*50}')
-plt.xlabel('fractional mass error')
-plt.ylabel('mass error count')
+    #plt.title('Fractional mass difference in dependence of number of Bessel roots')
+    plt.hist(err,bins = 100,histtype='step',label=f'nr = {(i+1)*50}')
+plt.xlabel('Fractional Mass Error')
+plt.ylabel('Count')
 plt.legend()
+plt.savefig('Fractionalmasserrorcount.png')
 plt.show()
