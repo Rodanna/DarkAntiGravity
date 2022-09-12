@@ -13,8 +13,12 @@ aL = np.linspace(0.5,0.8,4)
 zL = 1/aL-1
 rmax = 150
 res = 500
+res2 = int(res/2)
 G = 6.67408e-11 #m^3/kgs^2
 c = 299792458 #m/s
+pc = 1/np.tan(4.848*10**(-6))*1.495978707*10**11/c # cs
+Mpc = pc*1e6 # cs
+H0 = 69.32/Mpc*1000/c # 1/s 
 kmtoMpc = 3.24078e-20
 z = 6 #np.linspace(6,13,7)
 u = np.linspace(-rmax,rmax,res)
@@ -27,8 +31,7 @@ potential = np.loadtxt('potential2_500.txt')
 f = plt.imread('HUBBLE.jpg')
 f = f[:res,:res,0]
 index = np.array([7]) #index = np.array([3,7])
-timedelay = []
-
+Hubble =[]
 
 run1,run2,run3 = 0,0,0
 for i in range(0,len(zL)):
@@ -37,7 +40,6 @@ for i in range(0,len(zL)):
     Ds = Distances.angular(a0,asrc)
     Dds = Distances.angular(aL[i],asrc)
     Dd = Distances.angular(a0,aL[i])
-    D = Ds*Dd/Dds
     critdens = (c*Ds)/(4*np.pi*G*Dd*Dds) #kg/m^2
     x,y = X-(Dds/Ds)*Xgrad/critdens, Y-(Dds/Ds)*Ygrad/critdens  
     for k in index:
@@ -60,118 +62,57 @@ for i in range(0,len(zL)):
             plt.clf()
             
             tnodim = ((X-x0)**2 + (Y-y0)**2)/2 + potential/critdens*(Dds/Ds)
-            tau = (1+zL[i])*Ds*Dd/Dd*tnodim #10^-9 s due to unit microrad
+            tau = (1+zL[i])*Ds*Dd/Dds*tnodim #10^-9 s due to unit microrad
             tau /= 1e12  #arrival time surface in s
             tmin = np.min(tau)
             tmax = np.max(tau)
-            levs = np.linspace(tmin,tmin + (tmax-tmin)/5,100)
+            levs = np.linspace(tmin,tmin + (tmax-tmin)/5,500)
             plt.gca().set_aspect('equal')
-            if k == 3 and t == 3:
-                if aL[i] == 0.5:
-                    plt.plot(-15,-10, 'b+')
-                    plt.plot(3,5,'b+')
-                    print('t1:',tau[-20+60,-15+60],'t2:',tau[8+60,8+60])
-                    timedelay.append((zL[run1],tau[-20+60,-15+60]*D,tau[8+60,8+60]*D))
-                if aL[i] == 0.6:
-                    plt.plot(-19,-12, 'b+')
-                    plt.plot(2,6,'b+')
-                    print('t1:',tau[-20+60,-15+60],'t2:',tau[8+60,8+60])
-                    timedelay.append((zL[run1],tau[-20+60,-15+60]*D,tau[8+60,8+60]*D))
-                if aL[i] == 0.7:
-                    plt.plot(-20,-12, 'b+')
-                    plt.plot(1,7,'b+')
-                    print('t1:',tau[-20+60,-15+60],'t2:',tau[8+60,8+60])
-                    timedelay.append((zL[run1],tau[-20+60,-15+60]*D,tau[8+60,8+60]*D))
-                if aL[i] == 0.8:
-                    plt.plot(-16,-11, 'b+')
-                    plt.plot(2,6,'b+')
-                    print('t1:',tau[-20+60,-15+60],'t2:',tau[8+60,8+60])
-                    timedelay.append((zL[run1],tau[-20+60,-15+60]*D,tau[8+60,8+60]*D))
             if k == 7 and t == 7:
                 if aL[i] == 0.5:
-                    plt.plot(-8,-5,'b+') 
-                    plt.plot(14,5,'r+') 
-                    plt.plot(1,-5,'r+')
-                    plt.plot(-3,7,'g+')
-                    print('t1:',tau[60-8,60-5],'t2:',tau[60+14,60+5],'t3:',tau[60+1,60-5],'t4:',tau[60-3,60+7])
-                    timedelay.append((zL[run1],tau[60-8,60-5]*D,tau[60+14,60+5]*D,tau[60+1,60-5]*D,tau[60-3,60+7]*D))
+                    x1 = np.array([-9,14,0,-2])
+                    y1 = np.array([-4,4,-7,7])                    
+                    for m in range (0,len(x1)):
+                        plt.plot(x1[m],y1[m],'r.',markersize = 1)
+                        print(f't{m}:',tau[res2+x1[m],res2+y1[m]])
+                        for n in range(m+1,len(x1)):
+                            Hnodim = np.abs((x1[m]-x0)**2 + (y1[m]-y0)**2 -(x1[n]-x0)**2 -(y1[n]-y0)**2)/2 + np.abs(potential[res2+x1[m],res2+y1[m]]-potential[res2+x1[n],res2+y1[n]])/critdens*(Dds/Ds)
+                            H = (1+zL[i])/np.abs(tau[res2+x1[m],res2+y1[m]]-tau[res2+x1[n],res2+y1[n]])*Ds*Dd/Dds*Hnodim/c
+                            Hubble.append(H)
+                  
                 if aL[i] == 0.6:
-                    plt.plot(-13,-5,'b+') 
-                    plt.plot(17,6,'r+') 
-                    plt.plot(0,-9,'r+')
-                    plt.plot(-4,10,'g+')
-                    print('t1:',tau[60-13,60-5],'t2:',tau[60+17,60+6],'t3:',tau[60,60-9],'t4:',tau[60-4,60+10])
-                    timedelay.append((zL[run1],tau[60-13,60-5]*D,tau[60+17,60+6]*D,tau[60,60-9]*D,tau[60-4,60+10]*D))
+                    x1 = np.array([-13,17,0,-3])
+                    y1 = np.array([-5,4,-9,10])
+                    for m in range (0,len(x1)):
+                        plt.plot(x1[m],y1[m],'r.',markersize = 1)
+                        print(f't{m}:',tau[res2+x1[m],res2+y1[m]])
+                        for n in range(m+1,len(x1)):
+                            Hnodim = np.abs((x1[m]-x0)**2 + (y1[m]-y0)**2 -(x1[n]-x0)**2 -(y1[n]-y0)**2)/2 + np.abs(potential[res2+x1[m],res2+y1[m]]-potential[res2+x1[n],res2+y1[n]])/critdens*(Dds/Ds)
+                            H = (1+zL[i])/np.abs(tau[res2+x1[m],res2+y1[m]]-tau[res2+x1[n],res2+y1[n]])*Ds*Dd/Dds*Hnodim/c
+                            Hubble.append(H)
+                                        
                 if aL[i] == 0.7:
-                    plt.plot(-14,-5, 'b+') 
-                    plt.plot(18,7,'r+') 
-                    plt.plot(0,-11,'r+')
-                    plt.plot(-4,11,'g+')
-                    print('t1:',tau[60-14,60-5],'t2:',tau[60+18,60+7],'t3:',tau[60,60-11],'t4:',tau[60-4,60+11])
-                    timedelay.append((zL[run1],tau[60-14,60-5]*D,tau[60+18,60+7]*D,tau[60,60-11]*D,tau[60-4,60+11]*D))
+                    x1 = np.array([-14,19,0,-3])
+                    y1 = np.array([-7,4,-11,11])
+                    for m in range (0,len(x1)):
+                        plt.plot(x1[m],y1[m],'r.',markersize = 1)
+                        print(f't{m}:',tau[res2+x1[m],res2+y1[m]])
+                        for n in range(m+1,len(x1)):
+                            Hnodim = np.abs((x1[m]-x0)**2 + (y1[m]-y0)**2 -(x1[n]-x0)**2 -(y1[n]-y0)**2)/2 + np.abs(potential[res2+x1[m],res2+y1[m]]-potential[res2+x1[n],res2+y1[n]])/critdens*(Dds/Ds)
+                            H = (1+zL[i])/np.abs(tau[res2+x1[m],res2+y1[m]]-tau[res2+x1[n],res2+y1[n]])*Ds*Dd/Dds*Hnodim/c
+                            Hubble.append(H)
+                                        
                 if aL[i] == 0.8:
-                    plt.plot(-10,-4,'b+') 
-                    plt.plot(15,6,'r+') 
-                    plt.plot(0,-6,'r+')
-                    plt.plot(-3,8,'g+')
-                    print('t1:',tau[60-10,60-4],'t2:',tau[60+15,60+6],'t3:',tau[60,60-6],'t4:',tau[60-3,60+8])
-                    timedelay.append((zL[run1],tau[60-10,60-4]*D,tau[60+15,60+6]*D,tau[60,60-6]*D,tau[60-3,60+8]*D))
-            if k == 3 and t == 7:
-                if aL[i] == 0.5:
-                    plt.plot(-15,-3,'b+')
-                    plt.plot(3,3,'b+')
-                    plt.plot(8,5,'b+')
-                    print('t1:',tau[-23+60,16+60],'t2:',tau[3+60,3+60])
-                    timedelay.append((zL[run1],tau[-23+60,16+60]*D,tau[3+60,3+60]*D))
-                if aL[i] == 0.6:
-                    plt.plot(-20,-4, 'b+') 
-                    plt.plot(15,6,'b+') 
-                    plt.plot(2,3,'b+')
-                    plt.plot(1,14,'b+')
-                    print('t1:',tau[-13+60,-7+60],'t2:',tau[17+60,5+60])
-                    timedelay.append((zL[run1],tau[-6+60,-2+60]*D,tau[12+60,20+60]*D))
-                if aL[i] == 0.7:
-                    plt.plot(-26,-5, 'b+') 
-                    plt.plot(15,6,'b+') 
-                    plt.plot(1,-5,'b+')
-                    plt.plot(1,10,'b+')
-                    print('t1:',tau[-13+60,-7+60],'t2:',tau[17+60,5+60])
-                    timedelay.append((zL[run1],tau[-6+60,-2+60]*D,tau[12+60,20+60]*D))
-                if aL[i] == 0.8:
-                    plt.plot(-9,-5, 'b+') 
-                    plt.plot(15,6,'b+') 
-                    plt.plot(1,-5,'b+')
-                    plt.plot(-2,5,'b+')
-                    print('t1:',tau[-13+60,-7+60],'t2:',tau[17+60,5+60])
-                    timedelay.append((zL[run1],tau[-6+60,-2+60]*D,tau[12+60,20+60]*D))
-            if k == 7 and t == 3 :
-                if aL[i] == 0.5:
-                    plt.plot(2,-13,'b+')
-                    plt.plot(0,6,'b+')
-                    print('t1:',tau[5+60,-15+60],'t2:',tau[-3+60,3+60])
-                    timedelay.append((zL[run1],tau[5+60,-15+60]*D,tau[-3+60,3+60]*D))
-                if aL[i] == 0.6:
-                    plt.plot(-9,-15, 'b+') 
-                    plt.plot(15,-10,'b+') 
-                    plt.plot(4,-20,'b+')
-                    plt.plot(-2,7,'b+')
-                    print('t1:',tau[-13+60,-7+60],'t2:',tau[17+60,5+60])
-                    timedelay.append((zL[run1],tau[-6+60,-2+60]*D,tau[12+60,20+60]*D))
-                if aL[i] == 0.7:
-                    plt.plot(-9,-10, 'b+') 
-                    plt.plot(15,6,'b+') 
-                    plt.plot(1,-15,'b+')
-                    plt.plot(3,5,'b+')
-                    print('t1:',tau[-13+60,-7+60],'t2:',tau[17+60,5+60])
-                    timedelay.append((zL[run1],tau[-6+60,-2+60]*D,tau[12+60,20+60]*D))
-                if aL[i] == 0.8:
-                    plt.plot(-9,-5, 'b+') 
-                    plt.plot(15,6,'b+') 
-                    plt.plot(1,-5,'b+')
-                    plt.plot(-2,5,'b+')
-                    print('t1:',tau[-13+60,-7+60],'t2:',tau[17+60,5+60])
-                    timedelay.append((zL[run1],tau[-6+60,-2+60]*D,tau[12+60,20+60]*D))
-                
+                    x1 = np.array([-10,15,0,-3])
+                    y1 = np.array([-4,4,-8,8])
+                    for m in range (0,len(x1)):
+                        plt.plot(x1[m],y1[m],'r.',markersize = 1)
+                        print(f't{m}:',tau[res2+x1[m],res2+y1[m]])
+                        for n in range(m+1,len(x1)):
+                            Hnodim = np.abs((x1[m]-x0)**2 + (y1[m]-y0)**2 -(x1[n]-x0)**2 -(y1[n]-y0)**2)/2 + np.abs(potential[res2+x1[m],res2+y1[m]]-potential[res2+x1[n],res2+y1[n]])/critdens*(Dds/Ds)
+                            H = (1+zL[i])/np.abs(tau[res2+x1[m],res2+y1[m]]-tau[res2+x1[n],res2+y1[n]])*Ds*Dd/Dds*Hnodim/c
+                            Hubble.append(H)
+                                                        
             plt.contour(Y,X,tau,levels=levs)
             #plt.colorbar(cs)
             plt.grid()
@@ -179,24 +120,7 @@ for i in range(0,len(zL)):
             plt.title('%f %i %i' % (aL[i],k,t))
             plt.pause(0.1)
             plt.clf()
-            run3 += 1
-        run2 += 1
-    run1 +=1
 
-Hubble =[]
-for i in range(0,4):
-    #print(kmtoMpc*timedelay[i][0]/np.abs(timedelay[i][1]-timedelay[i][2]))
-    Hubble.append(kmtoMpc*timedelay[i][0]/np.abs(timedelay[i][1]-timedelay[i][2]))
-    #print(kmtoMpc*timedelay[i][0]/np.abs(timedelay[i][1]-timedelay[i][3]))
-    Hubble.append(kmtoMpc*timedelay[i][0]/np.abs(timedelay[i][1]-timedelay[i][3]))
-    #print(kmtoMpc*timedelay[i][0]/np.abs(timedelay[i][1]-timedelay[i][4]))
-    Hubble.append(kmtoMpc*timedelay[i][0]/np.abs(timedelay[i][1]-timedelay[i][4]))
-    #print(kmtoMpc*timedelay[i][0]/np.abs(timedelay[i][2]-timedelay[i][3]))
-    Hubble.append(kmtoMpc*timedelay[i][0]/np.abs(timedelay[i][2]-timedelay[i][3]))
-    #print(kmtoMpc*timedelay[i][0]/np.abs(timedelay[i][2]-timedelay[i][4]))
-    Hubble.append(kmtoMpc*timedelay[i][0]/np.abs(timedelay[i][2]-timedelay[i][4]))
-    #print(kmtoMpc*timedelay[i][0]/np.abs(timedelay[i][3]-timedelay[i][4]))
-    Hubble.append(kmtoMpc*timedelay[i][0]/np.abs(timedelay[i][3]-timedelay[i][4]))
     
 HubbleA = np.asarray(Hubble)
 
