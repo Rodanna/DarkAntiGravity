@@ -76,7 +76,7 @@ for i in range(0,len(zL)):
                         plt.plot(x1[m],y1[m],'r.',markersize = 1)
                         print(f't{m}:',tau[res2+x1[m],res2+y1[m]])
                         for n in range(m+1,len(x1)):
-                            Hnodim = np.abs((x1[m]-x0)**2 + (y1[m]-y0)**2 -(x1[n]-x0)**2 -(y1[n]-y0)**2)/2 + np.abs(potential[res2+x1[m],res2+y1[m]]-potential[res2+x1[n],res2+y1[n]])/critdens*(Dds/Ds)
+                            Hnodim = np.abs((x1[m]-x0)**2 + (y1[m]-y0)**2 -(x1[n]-x0)**2 -(y1[n]-y0)**2)/2 + np.abs(potential[res2+y1[m],res2+x1[m]]-potential[res2+y1[n],res2+x1[n]])/critdens*(Dds/Ds) #x and y are flipped for potential
                             H = (1+zL[i])/np.abs(tau[res2+x1[m],res2+y1[m]]-tau[res2+x1[n],res2+y1[n]])*Ds*Dd/Dds*Hnodim/c
                             Hubble.append(H)
                   
@@ -87,7 +87,7 @@ for i in range(0,len(zL)):
                         plt.plot(x1[m],y1[m],'r.',markersize = 1)
                         print(f't{m}:',tau[res2+x1[m],res2+y1[m]])
                         for n in range(m+1,len(x1)):
-                            Hnodim = np.abs((x1[m]-x0)**2 + (y1[m]-y0)**2 -(x1[n]-x0)**2 -(y1[n]-y0)**2)/2 + np.abs(potential[res2+x1[m],res2+y1[m]]-potential[res2+x1[n],res2+y1[n]])/critdens*(Dds/Ds)
+                            Hnodim = np.abs((x1[m]-x0)**2 + (y1[m]-y0)**2 -(x1[n]-x0)**2 -(y1[n]-y0)**2)/2 + np.abs(potential[res2+y1[m],res2+x1[m]]-potential[res2+y1[n],res2+x1[n]])/critdens*(Dds/Ds) #x and y are flipped for potential
                             H = (1+zL[i])/np.abs(tau[res2+x1[m],res2+y1[m]]-tau[res2+x1[n],res2+y1[n]])*Ds*Dd/Dds*Hnodim/c
                             Hubble.append(H)
                                         
@@ -98,7 +98,7 @@ for i in range(0,len(zL)):
                         plt.plot(x1[m],y1[m],'r.',markersize = 1)
                         print(f't{m}:',tau[res2+x1[m],res2+y1[m]])
                         for n in range(m+1,len(x1)):
-                            Hnodim = np.abs((x1[m]-x0)**2 + (y1[m]-y0)**2 -(x1[n]-x0)**2 -(y1[n]-y0)**2)/2 + np.abs(potential[res2+x1[m],res2+y1[m]]-potential[res2+x1[n],res2+y1[n]])/critdens*(Dds/Ds)
+                            Hnodim = np.abs((x1[m]-x0)**2 + (y1[m]-y0)**2 -(x1[n]-x0)**2 -(y1[n]-y0)**2)/2 + np.abs(potential[res2+y1[m],res2+x1[m]]-potential[res2+y1[n],res2+x1[n]])/critdens*(Dds/Ds) #x and y are flipped for potential
                             H = (1+zL[i])/np.abs(tau[res2+x1[m],res2+y1[m]]-tau[res2+x1[n],res2+y1[n]])*Ds*Dd/Dds*Hnodim/c
                             Hubble.append(H)
                                         
@@ -109,7 +109,7 @@ for i in range(0,len(zL)):
                         plt.plot(x1[m],y1[m],'r.',markersize = 1)
                         print(f't{m}:',tau[res2+x1[m],res2+y1[m]])
                         for n in range(m+1,len(x1)):
-                            Hnodim = np.abs((x1[m]-x0)**2 + (y1[m]-y0)**2 -(x1[n]-x0)**2 -(y1[n]-y0)**2)/2 + np.abs(potential[res2+x1[m],res2+y1[m]]-potential[res2+x1[n],res2+y1[n]])/critdens*(Dds/Ds)
+                            Hnodim = np.abs((x1[m]-x0)**2 + (y1[m]-y0)**2 -(x1[n]-x0)**2 -(y1[n]-y0)**2)/2 + np.abs(potential[res2+y1[m],res2+x1[m]]-potential[res2+y1[n],res2+x1[n]])/critdens*(Dds/Ds) #x and y are flipped for potential
                             H = (1+zL[i])/np.abs(tau[res2+x1[m],res2+y1[m]]-tau[res2+x1[n],res2+y1[n]])*Ds*Dd/Dds*Hnodim/c
                             Hubble.append(H)
                                                         
