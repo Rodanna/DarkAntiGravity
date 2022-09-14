@@ -45,7 +45,7 @@ for i in range(0,len(zL)):
     for k in index:
         for t in index:
             f = f*0
-            f[55+k,55+t] = 1
+            #f[245+k,245+t] = 1
             x0 = -5 + t
             y0 = -5 + k
             rad2 = (X-x0)**2 + (Y-y0)**2
@@ -64,6 +64,13 @@ for i in range(0,len(zL)):
             tnodim = ((X-x0)**2 + (Y-y0)**2)/2 + potential/critdens*(Dds/Ds)
             tau = (1+zL[i])*Ds*Dd/Dds*tnodim #10^-9 s due to unit microrad
             tau /= 1e12  #arrival time surface in s
+            for haha in range(0,len(X)):
+                for hihi in range(0,len(Y)):
+                    if tau[haha,hihi] == 2342.6659233592763:
+                        print('erstes:',haha,hihi)
+                    elif tau[haha,hihi] == 2351.435475690362:
+                        print('zweites:',haha,hihi)
+                        
             tmin = np.min(tau)
             tmax = np.max(tau)
             levs = np.linspace(tmin,tmin + (tmax-tmin)/5,500)
@@ -71,24 +78,31 @@ for i in range(0,len(zL)):
             if k == 7 and t == 7:
                 if aL[i] == 0.5:
                     x1 = np.array([-9,14,0,-2])
-                    y1 = np.array([-4,4,-7,7])                    
+                    y1 = np.array([-4,4,-7,7]) 
                     for m in range (0,len(x1)):
                         plt.plot(x1[m],y1[m],'r.',markersize = 1)
-                        print(f't{m}:',tau[res2+x1[m],res2+y1[m]])
+                        #print(f't{m}:',tau[res2+x1[m],res2+y1[m]])
+                        
                         for n in range(m+1,len(x1)):
-                            Hnodim = np.abs((x1[m]-x0)**2 + (y1[m]-y0)**2 -(x1[n]-x0)**2 -(y1[n]-y0)**2)/2 + np.abs(potential[res2+y1[m],res2+x1[m]]-potential[res2+y1[n],res2+x1[n]])/critdens*(Dds/Ds) #x and y are flipped for potential
-                            H = (1+zL[i])/np.abs(tau[res2+x1[m],res2+y1[m]]-tau[res2+x1[n],res2+y1[n]])*Ds*Dd/Dds*Hnodim/c
+                            Hnodim = ((X[0,res2+x1[m]]-x0)**2 + (Y[res2+y1[m],0]-y0)**2 -(X[0,res2+x1[n]]-x0)**2 -(Y[res2+y1[n],0]-y0)**2)/2 - np.abs(potential[res2+y1[m],res2+x1[m]]-potential[res2+y1[n],res2+x1[n]])/critdens*(Dds/Ds) #x and y are flipped for potential
+                            Hnodim /= 1e12
+                            timedelay = tau[res2+y1[m],res2+x1[m]]-tau[res2+y1[n],res2+x1[n]]
+                            H = (1+zL[i])*Ds*Dd/Dds*Hnodim/timedelay
+                            H = round(H,4)
                             Hubble.append(H)
-                  
+                
+                
+                '''  
                 if aL[i] == 0.6:
                     x1 = np.array([-13,17,0,-3])
                     y1 = np.array([-5,4,-9,10])
                     for m in range (0,len(x1)):
                         plt.plot(x1[m],y1[m],'r.',markersize = 1)
-                        print(f't{m}:',tau[res2+x1[m],res2+y1[m]])
+                        #print(f't{m}:',tau[res2+x1[m],res2+y1[m]])
                         for n in range(m+1,len(x1)):
                             Hnodim = np.abs((x1[m]-x0)**2 + (y1[m]-y0)**2 -(x1[n]-x0)**2 -(y1[n]-y0)**2)/2 + np.abs(potential[res2+y1[m],res2+x1[m]]-potential[res2+y1[n],res2+x1[n]])/critdens*(Dds/Ds) #x and y are flipped for potential
-                            H = (1+zL[i])/np.abs(tau[res2+x1[m],res2+y1[m]]-tau[res2+x1[n],res2+y1[n]])*Ds*Dd/Dds*Hnodim/c
+                            timedelay = np.abs(tau[res2+x1[m],res2+y1[m]]-tau[res2+x1[n],res2+y1[n]])
+                            H = (1+zL[i])/timedelay*Ds*Dd/Dds*Hnodim
                             Hubble.append(H)
                                         
                 if aL[i] == 0.7:
@@ -96,10 +110,11 @@ for i in range(0,len(zL)):
                     y1 = np.array([-7,4,-11,11])
                     for m in range (0,len(x1)):
                         plt.plot(x1[m],y1[m],'r.',markersize = 1)
-                        print(f't{m}:',tau[res2+x1[m],res2+y1[m]])
+                        #print(f't{m}:',tau[res2+x1[m],res2+y1[m]])
                         for n in range(m+1,len(x1)):
                             Hnodim = np.abs((x1[m]-x0)**2 + (y1[m]-y0)**2 -(x1[n]-x0)**2 -(y1[n]-y0)**2)/2 + np.abs(potential[res2+y1[m],res2+x1[m]]-potential[res2+y1[n],res2+x1[n]])/critdens*(Dds/Ds) #x and y are flipped for potential
-                            H = (1+zL[i])/np.abs(tau[res2+x1[m],res2+y1[m]]-tau[res2+x1[n],res2+y1[n]])*Ds*Dd/Dds*Hnodim/c
+                            timedelay = np.abs(tau[res2+x1[m],res2+y1[m]]-tau[res2+x1[n],res2+y1[n]])
+                            H = (1+zL[i])/timedelay*Ds*Dd/Dds*Hnodim
                             Hubble.append(H)
                                         
                 if aL[i] == 0.8:
@@ -107,11 +122,12 @@ for i in range(0,len(zL)):
                     y1 = np.array([-4,4,-8,8])
                     for m in range (0,len(x1)):
                         plt.plot(x1[m],y1[m],'r.',markersize = 1)
-                        print(f't{m}:',tau[res2+x1[m],res2+y1[m]])
+                        #print(f't{m}:',tau[res2+x1[m],res2+y1[m]])
                         for n in range(m+1,len(x1)):
                             Hnodim = np.abs((x1[m]-x0)**2 + (y1[m]-y0)**2 -(x1[n]-x0)**2 -(y1[n]-y0)**2)/2 + np.abs(potential[res2+y1[m],res2+x1[m]]-potential[res2+y1[n],res2+x1[n]])/critdens*(Dds/Ds) #x and y are flipped for potential
-                            H = (1+zL[i])/np.abs(tau[res2+x1[m],res2+y1[m]]-tau[res2+x1[n],res2+y1[n]])*Ds*Dd/Dds*Hnodim/c
-                            Hubble.append(H)
+                            timedelay = np.abs(tau[res2+x1[m],res2+y1[m]]-tau[res2+x1[n],res2+y1[n]])
+                            H = (1+zL[i])/timedelay*Ds*Dd/Dds*Hnodim
+                            Hubble.append(H)'''
                                                         
             plt.contour(Y,X,tau,levels=levs)
             #plt.colorbar(cs)
