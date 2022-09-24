@@ -31,7 +31,7 @@ for i in range(0,23):
     dens[p1[i]][p2[i]] = d
 '''
 
-dens = np.loadtxt('galaxy2.txt')
+dens = np.loadtxt('galaxy1.txt')
 
 levs = np.linspace(1,8,2) #for kappa == 1 surface
 lev = np.linspace(0,12,20)
@@ -57,6 +57,7 @@ plt.show()
 nr, root = np.loadtxt('roots.txt', unpack=True) #import bessel roots
 nr = nr[:]
 root = root[:]
+
 a = np.ones(len(nr),float)
 b = np.ones(len(nr),float)
 nr = [int(m) for m in nr]
@@ -80,7 +81,9 @@ for n in range(0,len(nr)): #coefficients of Fourier Bessel series
     else: 
         a[n] = Ba/N0
         b[n] = Bb/N0
-    print(n)
+noise = np.random.normal(0,np.mean(a)/10,len(a))
+a += noise
+b += noise
 
 res2 = 500
 u = np.linspace(-rmax,rmax,res2)
@@ -88,20 +91,20 @@ X,Y = np.meshgrid(u,u)
 r = np.sqrt(X**2+Y**2) 
 phi = np.arctan2(Y,X)
 
-
 for i in range(0,len(nr)): #Fourier Bessel series with coefficients
+    print(i)
     m = nr[i]
     alpha = root[i]
     angpart = a[i]*np.cos(m*phi)
     if m > 0:
         angpart += b[i]*np.sin(m*phi)
     pot += 2*(rmax/alpha)**2*special.jv(m,alpha*r/rmax)*angpart #microrad**2*kg/m´2
-    fit += special.jv(m,alpha*r/rmax)*angpart  #kg/m^2
-    print(i)
+    #fit += special.jv(m,alpha*r/rmax)*angpart  #kg/m^2
 
-np.savetxt('potential2_500.txt',pot)
-np.savetxt('fit2_500.txt',fit)
+np.savetxt('noisypotential1_10(4).txt',pot)
+#np.savetxt('fit1_500.txt',fit)
 
+'''
 plt.clf()
 plt.title('potential')
 plt.gca().set_aspect('equal')
@@ -136,13 +139,12 @@ for i in range(0,len(nr)):
     alpha = root[i] #microrad
     rgrad += 2*(rmax/alpha)**2*(b[i]*np.sin(m*phi)+a[i]*np.cos(m*phi))*(alpha/rmax)*special.jvp(m,r*alpha/rmax,n=1)
     phigrad += 2*(rmax/alpha)**2*(b[i]*m*np.cos(m*phi)-a[i]*m*np.sin(m*phi))*special.jv(m,r*alpha/rmax)/r
-    print(i)
-
+    print(i,'von',len(nr))
 Xgrad = rgrad*X/r-phigrad*Y/r #microradian*kg/m^2
 Ygrad = rgrad*Y/r+phigrad*X/r
 
-np.savetxt('Xgrad2_500.txt', Xgrad)
-np.savetxt('Ygrad2_500.txt', Ygrad)
+np.savetxt('noisyXgrad2_500(1/100).txt', Xgrad)
+np.savetxt('noisyYgrad2_500(1/100).txt', Ygrad)
 
 plt.contour(X,Y,Xgrad)
 plt.title('Xgrad')
@@ -154,5 +156,4 @@ plt.show()
 plt.figure()
 plt.gca().set_aspect('equal')
 plt.quiver(X[::5,::5],Y[::5,::5],Xgrad[::5,::5],Ygrad[::5,::5])
-plt.show()
-
+plt.show()'''
