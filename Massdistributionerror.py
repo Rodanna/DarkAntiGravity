@@ -29,8 +29,8 @@ phi = np.arctan2(Y,X)
 lev = np.linspace(0,0.3,20)
 levs = np.linspace(1,8,2)
 
-galaxy = np.loadtxt('galaxy2.txt')*invcritdens0 
-potential = np.loadtxt('potential2_120(nr=2238).txt')*invcritdens0         
+galaxy = np.loadtxt('galaxy1.txt')*invcritdens0 
+potential = np.loadtxt('potential1_120(nr=2238).txt')*invcritdens0         
 kappa = np.zeros((43,120,120))
 pot = np.zeros((43,120,120))
 
@@ -39,8 +39,8 @@ errorpot = np.zeros((43,120,120))
 
 
 for i in range (0,43):
-    kappa[i,:,:] = np.loadtxt(f'fit2_120(nr={(i+1)*50}).txt')*invcritdens0
-    pot[i,:,:] = np.loadtxt(f'potential2_120(nr={(i+1)*50}).txt')*invcritdens0
+    kappa[i,:,:] = np.loadtxt(f'fit1_120(nr={(i+1)*50}).txt')*invcritdens0
+    pot[i,:,:] = np.loadtxt(f'potential1_120(nr={(i+1)*50}).txt')*invcritdens0
     errorkappa[i,:,:] = kappa[i,:,:] - galaxy
     errorpot[i,:,:] = pot[i,:,:] - potential
     #errorpot[i,:,:] = pot[i,:,:] - np.mean(pot[i,:,:]) 
@@ -64,11 +64,11 @@ for i in range (0,43):
     plt.contour(X,Y,galaxy,levels=levs,cmap='gist_gray',linewidths=0.5)
     plt.xlabel('x in microradians')
     plt.ylabel('y in microradians')
-    plt.savefig(f'2total{(i+1)*50}.png')
+    plt.savefig(f'1total{(i+1)*50}.png')
     plt.show()
     meankappa[i] = np.mean(np.abs(kappa[i,:,:]))
     errorkappa1d[i] = np.mean(np.abs(errorkappa[i,:,:]))
-    rmskappa[i] = np.sqrt(np.mean(kappa[i,:,:]**2))
+    rmskappa[i] = np.sqrt(np.mean((kappa[i,:,:]-meankappa[i])**2))
     rmserrorkappa[i] = np.sqrt(np.mean(errorkappa[i,:,:]**2))
 
   
@@ -81,60 +81,71 @@ for i in range (0,43):
     plt.contour(X,Y,galaxy,levels=levs,cmap='gist_gray',linewidths=0.5)
     plt.xlabel('x in microradians')
     plt.ylabel('y in microradians')
-    plt.savefig(f'2potential{(i+1)*50}.png')
+    plt.savefig(f'1potential{(i+1)*50}.png')
     plt.show()
     meanpot[i] = np.mean(np.abs(pot[i,:,:]))
     errorpot1d[i] = np.mean(np.abs(errorpot[i,:,:]))
     rmserrorpot[i] = np.sqrt(np.mean(errorpot[i,:,:]**2))
-    rmspot[i] = np.sqrt(np.mean(pot[i,:,:]**2))
+    rmspot[i] = np.sqrt(np.mean((pot[i,:,:])**2))
 
 
 x = np.arange(0,43)
 
-plt.figure()
-plt.title('Mean mass error in dependence of number of Bessel roots')
-plt.grid()
-plt.plot((x+1)*50,errorkappa1d,'b+',label='Mean error of $\kappa$')
-plt.plot((x+1)*50,meankappa,'b+',label=r'Mean $\kappa$')
-plt.xlabel('number of bessel roots')
-plt.ylabel(r'Error of $\kappa$')
-plt.legend()
-plt.savefig('Meanmasserror.png')
+fig, axs = plt.subplots(2)
+fig.suptitle('Mean $\kappa$ and $\kappa$ error')
+axs[1].semilogy((x+1)*50,errorkappa1d,'b+',label='Mean error of $\kappa$')
+axs[1].label_outer()
+axs[1].grid(True)
+axs[1].legend()
+axs[0].semilogy((x+1)*50,meankappa,'r+',label=r'Mean of $\kappa$')
+axs[0].label_outer()
+axs[0].grid(True)
+axs[0].legend()
+plt.xlabel('number of Bessel roots')
+plt.savefig('1RMSmasserror.png')
 plt.show()
 
-plt.figure()
-plt.title('RMS of mass in dependence of number of Bessel roots')
-plt.grid()
-plt.plot((x+1)*50,rmserrorkappa,'b+',label ='RMS of error of $\kappa$')
-plt.plot((x+1)*50,rmskappa,'b+',label ='RMS $\kappa$')
-plt.xlabel('number of bessel roots')
-plt.ylabel('RMS of $\kappa$')
-plt.legend()
-plt.savefig('RMSmasserror.png')
+fig, axs = plt.subplots(2)
+fig.suptitle('RMS of $\kappa$ and $\kappa$ error')
+axs[1].semilogy((x+1)*50,rmserrorkappa,'b+',label ='RMS of error of $\kappa$')
+axs[1].label_outer()
+axs[1].grid(True)
+axs[1].legend()
+axs[0].semilogy((x+1)*50,rmskappa,'r+',label ='RMS of $\kappa$')
+axs[0].label_outer()
+axs[0].grid(True)
+axs[0].legend()
+plt.xlabel('number of Bessel roots')
+plt.savefig('1RMSmasserror.png')
 plt.show()
 
-plt.figure()
-plt.title('Mean potential error in dependence of number of Bessel roots')
-plt.grid()
-plt.plot((x+1)*50,errorpot1d,'b+',label='Mean error of potential')
-plt.plot((x+1)*50,meanpot,'b+',label='Mean potential')
-plt.xlabel('number of bessel roots')
-plt.ylabel('Potential Error')
-plt.legend()
-plt.savefig('Meanpotentialerror.png')
+fig, axs = plt.subplots(2)
+fig.suptitle('Mean potential and potential error in picoradian')
+axs[1].semilogy((x+1)*50, errorpot1d,'r+',label='Mean error of potential')
+axs[1].label_outer()
+axs[1].grid(True)
+axs[1].legend()
+axs[0].semilogy((x+1)*50,meanpot,'b+',label='Mean of potentiall')
+axs[0].label_outer()
+axs[0].grid(True)
+axs[0].legend()
+plt.xlabel('number of Bessel roots')
+#plt.savefig('1Meanpotentialerror.png')
 plt.show()
 
-plt.figure()
-plt.title('RMS of potential in dependence of number of Bessel roots')
-plt.grid()
-plt.plot((x+1)*50,rmserrorpot,'b+',label='RMS of error of potential')
-plt.plot((x+1)*50,rmspot,'b+',label='RMS of potential')
-plt.xlabel('number of bessel roots')
-plt.ylabel('RMS of Potential')
-plt.legend()
-plt.savefig('RMSpotentialerror.png')
+fig, axs = plt.subplots(2)
+fig.suptitle('RMS of potential and potential error in picoradian')
+axs[0].semilogy((x+1)*50, rmspot,'r+',label='RMS of potential')
+axs[0].label_outer()
+axs[0].grid(True)
+axs[0].legend()
+axs[1].semilogy((x+1)*50,rmserrorpot,'b+',label='RMS of error of potential')
+axs[1].label_outer()
+axs[1].grid(True)
+axs[1].legend()
+plt.xlabel('number of Bessel roots')
+#plt.savefig('1RMSpotentialerror.png')
 plt.show()
-
 
 '''
 for i in range (0,43):
@@ -146,7 +157,7 @@ for i in range (0,43):
     plt.contour(X,Y,galaxy,levels=levs,cmap='gist_gray',linewidths=0.5)
     plt.xlabel('x in microradians')
     plt.ylabel('y in microradians')
-    plt.savefig(f'2fractional{(i+1)*50}.png')
+    plt.savefig(f'1fractional{(i+1)*50}.png')
     plt.show()
 
 
@@ -160,5 +171,5 @@ for i in numbers:
 plt.xlabel('Fractional Mass Error')
 plt.ylabel('Count')
 plt.legend()
-plt.savefig('2Fractionalmasserrorcount.png')
+plt.savefig('1Fractionalmasserrorcount.png')
 plt.show()'''
