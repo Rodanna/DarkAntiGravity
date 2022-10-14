@@ -28,8 +28,6 @@ H0 = 67.6 # km/(s Mpc)
 kmtoMpc = 3.24078e-20
 
 u = np.linspace(-rmax,rmax,res)
-ufine = np.linspace(-rmax,rmax,res*10)
-Xfine,Yfine = np.meshgrid(ufine,ufine)
 X,Y = np.meshgrid(u,u)
 stoday = 3600*24 #s/day
 
@@ -58,14 +56,13 @@ Xgrad = -np.loadtxt('Xgrad2_120(nr=100).txt')#4
 Ygrad = -np.loadtxt('Ygrad2_120(nr=100).txt')
 pot = np.loadtxt('potential2_120(nr=100).txt')
 '''
+
 Xgrad= -np.loadtxt('Xgrad2_120(nr=2238).txt')#5
 Ygrad = -np.loadtxt('Ygrad2_120(nr=2238).txt')
 pot = np.loadtxt('potential2_120(nr=2238).txt')
 
 
 
-f = plt.imread('HUBBLE.jpg')
-f = f[:res,:res,0]
 index = np.array([7]) #index = np.array([3,7]) =[]
 Timedelay5 = []
 Timedelay6 = []
@@ -76,35 +73,13 @@ t = 7
 x0 = -5 +t
 y0 = -5 +k
 
-splineX = RectBivariateSpline(u,u,Xgrad)
-splineY = RectBivariateSpline(u,u,Ygrad)
+factor = 100
+resfine = res*factor
+resfine2 = int(resfine/2)
+ufine = np.linspace(-rmax,rmax,resfine)[40*factor:80*factor]
+Xfine,Yfine = np.meshgrid(ufine,ufine)
 
-gradX = splineX.ev(Xfine,Yfine)
-gradY = splineY.ev(Xfine,Yfine)
-
-plt.title('SplineX')
-plt.imshow(gradX.T,origin='lower',extent=[-rmax,rmax,-rmax,rmax])
-plt.xlabel('x in microradians')
-plt.pause(0.1)
-plt.clf()
-
-plt.title('SplineY')
-plt.imshow(gradY.T,origin='lower',extent=[-rmax,rmax,-rmax,rmax])
-plt.xlabel('x in microradians')
-plt.pause(0.1)
-plt.clf()
-
-tol = 0.001
-indices = []
-for i in range (0,len(gradX)):
-    for j in range(0,len(gradY)):
-        if np.abs(gradX[i,j]) < tol  :
-            print('X:',gradX[i,j],gradY[i,j],i,j)
-            indices.append((i/10-res2,j/10-res2))
-        if np.abs(gradY[i,j]) < tol:
-            print('Y:',gradX[i,j],gradY[i,j],i,j)
-            indices.append((i/10-res2,j/10-res2))
-
+f = np.zeros((resfine,resfine)) #plt.imread('HUBBLE.jpg')[:res,:res,0]*0
 
 for i in range(0,len(zL)):
     aL[i] = round(aL[i],1)
@@ -115,24 +90,23 @@ for i in range(0,len(zL)):
     critdens = (c*Ds)/(4*np.pi*G*Dd*Dds) #kg/m^2
     x,y = X-(Dds/Ds)*Xgrad/critdens, Y-(Dds/Ds)*Ygrad/critdens  
 
-    f = f*0
     x0 = -5 + t
     y0 = -5 + k
-    rad2 = (X-x0)**2 + (Y-y0)**2
+    rad2 = (Xfine-x0)**2 + (Yfine-y0)**2
     f = np.exp(-rad2/5)
-    spline = RectBivariateSpline(u,u,f.T)
+    spline = RectBivariateSpline(ufine,ufine,f.T)
     g = spline.ev(x,y)
     
     
     plt.title('source image at z = 6')
-    plt.imshow(f.T,origin='lower',extent=[-rmax,rmax,-rmax,rmax])
+    plt.imshow(f.T,origin='lower',extent=[-rmax/6,rmax/6,-rmax/6,rmax/6])
     plt.xlabel('x in microradians')
     plt.ylabel('y in microradians')
     plt.savefig('sourceat6')
     plt.pause(0.1)
     plt.clf()
     plt.title(f'lensed image for lens at z = {zL[i]}')
-    plt.imshow(g.T,origin='lower',extent=[-rmax,rmax,-rmax,rmax])
+    plt.imshow(g.T[40:80,40:80],origin='lower',extent=[-rmax/6,rmax/6,-rmax/6,rmax/6])
     plt.xlabel('x in microradians')
     plt.ylabel('y in microradians')
     plt.savefig(f'lensedimages{i}')
@@ -141,86 +115,75 @@ for i in range(0,len(zL)):
     
     tnodim = ((X-x0)**2 + (Y-y0)**2)/2 + pot/critdens*(Dds/Ds)
     tau = (1+zL[i])*Ds*Dd/Dds*tnodim #10^-9 s due to unit microrad
-    tau /= 1e12  #arrival time surface in s                           
+    tau /= 1e12  #arrival time surface in s     
+    tspline = RectBivariateSpline(u, u, tau)
+    tau = tspline.ev(Xfine,Yfine)
+                 
     tmin = np.min(tau)
     tmax = np.max(tau)
-    levs = np.linspace(tmin,tmin + (tmax-tmin)/5,500)
+    levs = np.linspace(tmin,tmin + (tmax-tmin)/5,40)
     plt.gca().set_aspect('equal')
+    
+    x1 = np.zeros(10)
+    y1 = np.zeros(10)
+    loc_min = []
+    loc_max = []
+    loc_sadd = []
+    extremum = []
+    for ix in range(1, 40*factor-1):
+        for iy in range(1, 40*factor-1):
+            if tau[ix, iy] < tau[ix, iy + 1] and tau[ix, iy] < tau[ix, iy - 1] and \
+               tau[ix, iy] < tau[ix + 1, iy] and tau[ix, iy] < tau[ix + 1, iy - 1] and \
+               tau[ix, iy] < tau[ix + 1, iy + 1] and tau[ix, iy] < tau[ix - 1, iy] and \
+               tau[ix, iy] < tau[ix - 1, iy - 1] and tau[ix, iy] < tau[ix - 1, iy + 1]:
+               loc_min.append((int(ix/factor)+50, int(iy/factor)+50))
+               #extremum.append((int(ix/factor)+50, int(iy/factor)+50))
+               extremum.append((ix,iy))
+    for ix in range(1, 40*factor-1):
+        for iy in range(1, 40*factor-1):
+            if tau[ix, iy] > tau[ix, iy + 1] and tau[ix, iy] > tau[ix, iy - 1] and \
+               tau[ix, iy] > tau[ix + 1, iy] and tau[ix, iy] > tau[ix + 1, iy - 1] and \
+               tau[ix, iy] > tau[ix + 1, iy + 1] and tau[ix, iy] > tau[ix - 1, iy] and \
+               tau[ix, iy] > tau[ix - 1, iy - 1] and tau[ix, iy] > tau[ix - 1, iy + 1]:
+               loc_max.append((int(ix/factor)+50, int(iy/factor)+50))
+               #extremum.append((int(ix/factor)+50, int(iy/factor)+50))
+               extremum.append((ix,iy))
+    for ix in range(1, 40*factor-1):
+        for iy in range(1, 40*factor-1):
+            if tau[ix, iy] > tau[ix, iy + 1] and tau[ix, iy] > tau[ix, iy - 1] and \
+               tau[ix, iy] < tau[ix + 1, iy] and tau[ix, iy] < tau[ix - 1, iy]:
+               loc_sadd.append((int(ix/factor)+50, int(iy/factor)+50))
+               #extremum.append((int(ix/factor)+50, int(iy/factor)+50))
+               extremum.append((ix,iy))
+    for ix in range(1, 40*factor-1):
+        for iy in range(1, 40*factor-1):
+            if tau[ix, iy] < tau[ix, iy + 1] and tau[ix, iy] < tau[ix, iy - 1] and \
+               tau[ix, iy] > tau[ix + 1, iy] and tau[ix, iy] > tau[ix - 1, iy]:
+               loc_sadd.append((int(ix/factor)+50, int(iy/factor)+50))
+               #extremum.append((int(ix/factor)+50, int(iy/factor)+50))
+               extremum.append((ix,iy))
+    print('minima:',loc_min,'maxima:',loc_max,'saddle:',loc_sadd)  
+    
+    for kik in range (0,len(extremum)):
+        y1[kik] = int(extremum[kik][0])
+        x1[kik] = int(extremum[kik][1])
+    for m in range (0,len(extremum)):
+        plt.plot(Xfine[0,int(x1[m])],Yfine[int(y1[m]),0],'r+',markersize = 3)
+        for n in range(m+1,len(extremum)):
+            timedelay = np.abs(tau[int(x1[m]),int(y1[m])]-tau[int(y1[n]),int(x1[n])])    
+            if aL[i] == 0.5:         
+                    Timedelay5.append(timedelay)                
+            if aL[i] == 0.6:
+                    Timedelay6.append(timedelay)                      
+            if aL[i] == 0.7:
+                    Timedelay7.append(timedelay)            
+            if aL[i] == 0.8:
+                    Timedelay8.append(timedelay)
 
-    if aL[i] == 0.5:
-        x1 = np.array([-10,14,-2,-3])#4
-        y1 = np.array([-4,4,-7,9])
-        #x1 = np.array([-10,14,-2,-3])#2 & 3
-        #y1 = np.array([-4,4,-7,9])
-        #x1 = np.array([-10,14,-2,-3])#1
-        #y1 = np.array([-4,4,-7,9])
-        #x1 = np.array([-10,14,-3,-4])#0
-        #y1 = np.array([-4,4,-5,3])
-        #x1 = np.array([-9,14,0,-2])# 5
-        #y1 = np.array([-4,4,-7,7]) 
-        for m in range (0,len(x1)):
-            plt.plot(x1[m],y1[m],'r+',markersize = 3)   
-            for n in range(m+1,len(x1)):
-                timedelay = np.abs(tau[res2+y1[m],res2+x1[m]]-tau[res2+y1[n],res2+x1[n]])
-                Timedelay5.append(timedelay)
             
-            
-    if aL[i] == 0.6:
-        x1 = np.array([-13,17,0,-3])#4
-        y1 = np.array([-5,4,-9,10])
-        #x1 = np.array([-14,19,0,-3])#2 & 3
-        #y1 = np.array([-5,4,-10,10])
-        #x1 = np.array([-14,19,0,-3])#1
-        #y1 = np.array([-5,4,-10,10])
-        #x1 = np.array([-17,19,0,-3])#0
-        #y1 = np.array([-5,4,-10,9])
-        #x1 = np.array([-13,17,0,-3])#5
-        #y1 = np.array([-5,4,-9,10])
-        for m in range (0,len(x1)):
-            plt.plot(x1[m],y1[m],'r+',markersize = 3)  
-            for n in range(m+1,len(x1)):
-                timedelay = np.abs(tau[res2+y1[m],res2+x1[m]]-tau[res2+y1[n],res2+x1[n]])
-                Timedelay6.append(timedelay)
-                
-                
-    if aL[i] == 0.7:
-        x1 = np.array([-14,19,0,-3])#4
-        y1 = np.array([-7,4,-11,11])
-        #x1 = np.array([-16,19,0,-3])#2 & 3
-        #y1 = np.array([-6,5,-11,10])
-        #x1 = np.array([-16,19,0,-3])#1
-        #y1 = np.array([-6,5,-11,10])
-        #x1 = np.array([-16,19,0,-3])#0
-        #y1 = np.array([-6,4,-11,10])
-        #x1 = np.array([-14,19,0,-3])#5
-        #y1 = np.array([-7,4,-11,11])
-        for m in range (0,len(x1)):
-            plt.plot(x1[m],y1[m],'r+',markersize = 3)  
-            for n in range(m+1,len(x1)):
-                timedelay = np.abs(tau[res2+y1[m],res2+x1[m]]-tau[res2+y1[n],res2+x1[n]])
-                Timedelay7.append(timedelay)
-                
-                                                    
-    if aL[i] == 0.8:
-        x1 = np.array([-10,15,0,-3])#4
-        y1 = np.array([-4,4,-8,8])
-        #x1 = np.array([-10,16,-2,-3])#2 & 3
-        #y1 = np.array([-4,4,-8,8])
-        #x1 = np.array([-11,16,-2,-3])#1
-        #y1 = np.array([-4,4,-8,8])
-        #x1 = np.array([-11,16,-2,-3])#0
-        #y1 = np.array([-4,4,-6,8])
-        #x1 = np.array([-10,15,0,-3])#5
-        #y1 = np.array([-4,4,-8,8])
-        for m in range (0,len(x1)):
-            plt.plot(x1[m],y1[m],'r+',markersize = 3)
-            for n in range(m+1,len(x1)):
-                timedelay = np.abs(tau[res2+y1[m],res2+x1[m]]-tau[res2+y1[n],res2+x1[n]])
-                Timedelay8.append(timedelay)
-                
-                                    
     #cs = 
-    plt.contour(Y,X,tau,levels=levs)
+    plt.gca().set_aspect('equal')
+    plt.contour(Yfine,Xfine,tau.T,levels=levs,origin='lower',extent=[-rmax/6,rmax/6,-rmax/6,rmax/6])
     #plt.colorbar(cs)
     plt.grid()
     plt.title(f'arrival time surface for lens at z = {zL[i]}')
@@ -230,9 +193,10 @@ for i in range(0,len(zL)):
     plt.pause(0.1)
     plt.clf()
 
+    
 Timedelay5 = np.asarray(Timedelay5)/stoday
 Timedelay6 = np.asarray(Timedelay6)/stoday
 Timedelay7 = np.asarray(Timedelay7)/stoday
 Timedelay8 = np.asarray(Timedelay8)/stoday
 
-#print(Timedelay5,Timedelay6,Timedelay7,Timedelay8)
+print(Timedelay5,Timedelay6,Timedelay7,Timedelay8)
