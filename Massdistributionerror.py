@@ -29,8 +29,8 @@ phi = np.arctan2(Y,X)
 lev = np.linspace(0,0.3,20)
 levs = np.linspace(1,8,2)
 
-galaxy = np.loadtxt('galaxy1.txt')*invcritdens0 
-potential = np.loadtxt('potential1_120(nr=2238).txt')*invcritdens0         
+galaxy = np.loadtxt('galaxy2.txt')*invcritdens0 
+potential = np.loadtxt('potential2_120(nr=2238).txt')*invcritdens0         
 kappa = np.zeros((43,120,120))
 pot = np.zeros((43,120,120))
 
@@ -39,8 +39,8 @@ errorpot = np.zeros((43,120,120))
 
 
 for i in range (0,43):
-    kappa[i,:,:] = np.loadtxt(f'fit1_120(nr={(i+1)*50}).txt')*invcritdens0
-    pot[i,:,:] = np.loadtxt(f'potential1_120(nr={(i+1)*50}).txt')*invcritdens0
+    kappa[i,:,:] = np.loadtxt(f'fit2_120(nr={(i+1)*50}).txt')*invcritdens0
+    pot[i,:,:] = np.loadtxt(f'potential2_120(nr={(i+1)*50}).txt')*invcritdens0
     errorkappa[i,:,:] = kappa[i,:,:] - galaxy
     errorpot[i,:,:] = pot[i,:,:] - potential
     #errorpot[i,:,:] = pot[i,:,:] - np.mean(pot[i,:,:]) 
@@ -86,37 +86,37 @@ for i in range (0,43):
     meanpot[i] = np.mean(np.abs(pot[i,:,:]))
     errorpot1d[i] = np.mean(np.abs(errorpot[i,:,:]))
     rmserrorpot[i] = np.sqrt(np.mean(errorpot[i,:,:]**2))
-    rmspot[i] = np.sqrt(np.mean((pot[i,:,:])**2))
+    rmspot[i] = np.std(pot[i,:,:])
 
 
 x = np.arange(0,43)
 
 fig, axs = plt.subplots(2)
 fig.suptitle('Mean $\kappa$ and $\kappa$ error')
-axs[1].semilogy((x+1)*50,errorkappa1d,'b+',label='Mean error of $\kappa$')
+axs[1].plot((x+1)*50,errorkappa1d,'b+',label='Mean error of $\kappa$')
 axs[1].label_outer()
 axs[1].grid(True)
 axs[1].legend()
-axs[0].semilogy((x+1)*50,meankappa,'r+',label=r'Mean of $\kappa$')
+axs[0].plot((x+1)*50,meankappa,'r+',label=r'Mean of $\kappa$')
 axs[0].label_outer()
 axs[0].grid(True)
 axs[0].legend()
 plt.xlabel('number of Bessel roots')
-plt.savefig('1RMSmasserror.png')
+#plt.savefig('1Meanmasserror.png')
 plt.show()
 
 fig, axs = plt.subplots(2)
 fig.suptitle('RMS of $\kappa$ and $\kappa$ error')
-axs[1].semilogy((x+1)*50,rmserrorkappa,'b+',label ='RMS of error of $\kappa$')
+axs[1].plot((x+1)*50,rmserrorkappa,'b+',label ='RMS of error of $\kappa$')
 axs[1].label_outer()
 axs[1].grid(True)
 axs[1].legend()
-axs[0].semilogy((x+1)*50,rmskappa,'r+',label ='RMS of $\kappa$')
+axs[0].plot((x+1)*50,rmskappa,'r+',label ='RMS of $\kappa$')
 axs[0].label_outer()
 axs[0].grid(True)
 axs[0].legend()
 plt.xlabel('number of Bessel roots')
-plt.savefig('1RMSmasserror.png')
+#plt.savefig('1RMSmasserror.png')
 plt.show()
 
 fig, axs = plt.subplots(2)
@@ -125,7 +125,7 @@ axs[1].semilogy((x+1)*50, errorpot1d,'r+',label='Mean error of potential')
 axs[1].label_outer()
 axs[1].grid(True)
 axs[1].legend()
-axs[0].semilogy((x+1)*50,meanpot,'b+',label='Mean of potentiall')
+axs[0].plot((x+1)*50,meanpot,'b+',label='Mean of potentiall')
 axs[0].label_outer()
 axs[0].grid(True)
 axs[0].legend()
@@ -135,7 +135,7 @@ plt.show()
 
 fig, axs = plt.subplots(2)
 fig.suptitle('RMS of potential and potential error in picoradian')
-axs[0].semilogy((x+1)*50, rmspot,'r+',label='RMS of potential')
+axs[0].plot((x+1)*50, rmspot,'r+',label='STD of potential')
 axs[0].label_outer()
 axs[0].grid(True)
 axs[0].legend()

@@ -36,31 +36,16 @@ Xgrad = np.zeros((6,120,120))
 Ygrad = np.zeros((6,120,120))
 
 
-'''Xgrad = -np.loadtxt('Xgrad2_120(nr=150).txt')#0
-Ygrad= -np.loadtxt('Ygrad2_120(nr=150).txt')
-pot = np.loadtxt('potential2_120(nr=150).txt')
-
-Xgrad = -np.loadtxt('Xgrad2_120(nr=500).txt')#1
+Xgrad = -np.loadtxt('Xgrad2_120(nr=500).txt')#4
 Ygrad = -np.loadtxt('Ygrad2_120(nr=500).txt')
+
 pot = np.loadtxt('potential2_120(nr=500).txt')
 
-Xgrad = -np.loadtxt('Xgrad2_120(nr=1000).txt')#2
-Ygrad = -np.loadtxt('Ygrad2_120(nr=1000).txt')
-pot = np.loadtxt('potential2_120(nr=1000).txt')
-
-Xgrad = -np.loadtxt('Xgrad2_120(nr=1500).txt')#3
-Ygrad= -np.loadtxt('Ygrad2_120(nr=1500).txt')
-pot = np.loadtxt('potential2_120(nr=1500).txt')
-
-Xgrad = -np.loadtxt('Xgrad2_120(nr=100).txt')#4
-Ygrad = -np.loadtxt('Ygrad2_120(nr=100).txt')
-pot = np.loadtxt('potential2_120(nr=100).txt')
 '''
-
 Xgrad= -np.loadtxt('Xgrad2_120(nr=2238).txt')#5
 Ygrad = -np.loadtxt('Ygrad2_120(nr=2238).txt')
 pot = np.loadtxt('potential2_120(nr=2238).txt')
-
+'''
 
 
 index = np.array([7]) #index = np.array([3,7]) =[]
@@ -68,18 +53,15 @@ Timedelay5 = []
 Timedelay6 = []
 Timedelay7 = []
 Timedelay8 = []
-k = 7
-t = 7
-x0 = -5 +t
-y0 = -5 +k
 
-factor = 100
+
+factor = 31 #29 for 1000 #10 for 2000 #20 for 1500 #13 for 2238
 resfine = res*factor
 resfine2 = int(resfine/2)
-ufine = np.linspace(-rmax,rmax,resfine)[40*factor:80*factor]
+ufine = np.linspace(-rmax,rmax,resfine)[40*factor:80*factor] #cuts out central square and refines it
 Xfine,Yfine = np.meshgrid(ufine,ufine)
 
-f = np.zeros((resfine,resfine)) #plt.imread('HUBBLE.jpg')[:res,:res,0]*0
+f = np.zeros((resfine,resfine))
 
 for i in range(0,len(zL)):
     aL[i] = round(aL[i],1)
@@ -88,8 +70,10 @@ for i in range(0,len(zL)):
     Dds = Distances.angular(aL[i],asrc)
     Dd = Distances.angular(a0,aL[i])
     critdens = (c*Ds)/(4*np.pi*G*Dd*Dds) #kg/m^2
-    x,y = X-(Dds/Ds)*Xgrad/critdens, Y-(Dds/Ds)*Ygrad/critdens  
-
+    x,y = X-(Dds/Ds)*Xgrad/critdens, Y-(Dds/Ds)*Ygrad/critdens
+        
+    k = 7
+    t = 7
     x0 = -5 + t
     y0 = -5 + k
     rad2 = (Xfine-x0)**2 + (Yfine-y0)**2
@@ -132,35 +116,31 @@ for i in range(0,len(zL)):
     extremum = []
     for ix in range(1, 40*factor-1):
         for iy in range(1, 40*factor-1):
-            if tau[ix, iy] < tau[ix, iy + 1] and tau[ix, iy] < tau[ix, iy - 1] and \
-               tau[ix, iy] < tau[ix + 1, iy] and tau[ix, iy] < tau[ix + 1, iy - 1] and \
-               tau[ix, iy] < tau[ix + 1, iy + 1] and tau[ix, iy] < tau[ix - 1, iy] and \
-               tau[ix, iy] < tau[ix - 1, iy - 1] and tau[ix, iy] < tau[ix - 1, iy + 1]:
+            if tau[ix, iy] <= tau[ix, iy + 1] and tau[ix, iy] <= tau[ix, iy - 1] and \
+               tau[ix, iy] <= tau[ix + 1, iy] and tau[ix, iy] <= tau[ix + 1, iy - 1] and \
+               tau[ix, iy] <= tau[ix + 1, iy + 1] and tau[ix, iy] <= tau[ix - 1, iy] and \
+               tau[ix, iy] <= tau[ix - 1, iy - 1] and tau[ix, iy] <= tau[ix - 1, iy + 1]:
                loc_min.append((int(ix/factor)+50, int(iy/factor)+50))
-               #extremum.append((int(ix/factor)+50, int(iy/factor)+50))
                extremum.append((ix,iy))
     for ix in range(1, 40*factor-1):
         for iy in range(1, 40*factor-1):
-            if tau[ix, iy] > tau[ix, iy + 1] and tau[ix, iy] > tau[ix, iy - 1] and \
-               tau[ix, iy] > tau[ix + 1, iy] and tau[ix, iy] > tau[ix + 1, iy - 1] and \
-               tau[ix, iy] > tau[ix + 1, iy + 1] and tau[ix, iy] > tau[ix - 1, iy] and \
-               tau[ix, iy] > tau[ix - 1, iy - 1] and tau[ix, iy] > tau[ix - 1, iy + 1]:
+            if tau[ix, iy] >= tau[ix, iy + 1] and tau[ix, iy] >= tau[ix, iy - 1] and \
+               tau[ix, iy] >= tau[ix + 1, iy] and tau[ix, iy] >= tau[ix + 1, iy - 1] and \
+               tau[ix, iy] >= tau[ix + 1, iy + 1] and tau[ix, iy] >= tau[ix - 1, iy] and \
+               tau[ix, iy] >= tau[ix - 1, iy - 1] and tau[ix, iy] >= tau[ix - 1, iy + 1]:
                loc_max.append((int(ix/factor)+50, int(iy/factor)+50))
-               #extremum.append((int(ix/factor)+50, int(iy/factor)+50))
                extremum.append((ix,iy))
     for ix in range(1, 40*factor-1):
         for iy in range(1, 40*factor-1):
-            if tau[ix, iy] > tau[ix, iy + 1] and tau[ix, iy] > tau[ix, iy - 1] and \
-               tau[ix, iy] < tau[ix + 1, iy] and tau[ix, iy] < tau[ix - 1, iy]:
+            if tau[ix, iy] >= tau[ix, iy + 1] and tau[ix, iy] >= tau[ix, iy - 1] and \
+               tau[ix, iy] <= tau[ix + 1, iy] and tau[ix, iy] <= tau[ix - 1, iy]:
                loc_sadd.append((int(ix/factor)+50, int(iy/factor)+50))
-               #extremum.append((int(ix/factor)+50, int(iy/factor)+50))
                extremum.append((ix,iy))
     for ix in range(1, 40*factor-1):
         for iy in range(1, 40*factor-1):
-            if tau[ix, iy] < tau[ix, iy + 1] and tau[ix, iy] < tau[ix, iy - 1] and \
-               tau[ix, iy] > tau[ix + 1, iy] and tau[ix, iy] > tau[ix - 1, iy]:
+            if tau[ix, iy] <= tau[ix, iy + 1] and tau[ix, iy] <= tau[ix, iy - 1] and \
+               tau[ix, iy] >= tau[ix + 1, iy] and tau[ix, iy] >= tau[ix - 1, iy]:
                loc_sadd.append((int(ix/factor)+50, int(iy/factor)+50))
-               #extremum.append((int(ix/factor)+50, int(iy/factor)+50))
                extremum.append((ix,iy))
     print('minima:',loc_min,'maxima:',loc_max,'saddle:',loc_sadd)  
     
@@ -189,7 +169,7 @@ for i in range(0,len(zL)):
     plt.title(f'arrival time surface for lens at z = {zL[i]}')
     plt.xlabel('x in microradians')
     plt.ylabel('y in microradians')
-    plt.savefig(f'timedelay{i}')
+    plt.savefig(f'timedelay{i}(nr=500)')
     plt.pause(0.1)
     plt.clf()
 
@@ -198,5 +178,8 @@ Timedelay5 = np.asarray(Timedelay5)/stoday
 Timedelay6 = np.asarray(Timedelay6)/stoday
 Timedelay7 = np.asarray(Timedelay7)/stoday
 Timedelay8 = np.asarray(Timedelay8)/stoday
-
-print(Timedelay5,Timedelay6,Timedelay7,Timedelay8)
+np.savetxt('Timedelay0.5(nr=500).txt',Timedelay5)
+np.savetxt('Timedelay0.6(nr=500).txt',Timedelay6)
+np.savetxt('Timedelay0.7(nr=500).txt',Timedelay7)
+np.savetxt('Timedelay0.8(nr=500).txt',Timedelay8)
+#print(Timedelay5,Timedelay6,Timedelay7,Timedelay8)
