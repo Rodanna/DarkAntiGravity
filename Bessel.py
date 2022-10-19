@@ -27,6 +27,15 @@ def bisection(x,v,tol):
     elif np.sign(special.jv(v,b)) == np.sign(special.jv(v,m)):
         return bisection(x[0:y],v,tol) # m closer than b
 
+rmax = 150 #microradians
+res = 250
+invcritdens0 = 0.49823288405658067 #(kg/m^2)^-1
+
+u = np.linspace(-rmax,rmax,res)
+X,Y = np.meshgrid(u,u) 
+radius = np.sqrt(X**2+Y**2) 
+phi = np.arctan2(Y,X)
+
 v = np.arange(0,70)
 x = np.linspace(1,150,1000)
 nrroots = 300
@@ -111,3 +120,11 @@ k = [v[0] for v in lyst]
 xr = [v[1] for v in lyst]
 plt.plot(k,xr,'.')
 plt.show()
+
+
+for n in range(0,16): #coefficients of Fourier Bessel series
+    bess = special.jv(n,radius) #alpha/rmax*r
+    fnc = bess*np.cos(m*phi)
+    plt.figure()
+    plt.plot(x,fnc)
+    plt.show()
