@@ -10,7 +10,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.interpolate import RectBivariateSpline
 import Distances
-import pandas as pd
 
 a0 = 1
 aL = np.linspace(0.5,0.8,4)
@@ -27,7 +26,23 @@ Mpc = pc*1e6 # cs
 invcritdens0 = 0.49823288405658067 #(kg/m^2)^-1
 H0 = 67.6 # km/(s Mpc)
 kmtoMpc = 3.24078e-20
+stoday = 3600*24
 
+x1 = np.zeros((5,5))  
+y1 = np.zeros((5,5))
+Timedelay = np.zeros((5,4,10))
+extremum = np.zeros((5,5,2))
+
+p = 0
+for i in range (5,9):
+    Timedelay[0][p] = sorted(np.loadtxt(f'Timedelay0.{i}(nr=700).txt')*stoday)
+    Timedelay[1][p] = sorted(np.loadtxt(f'Timedelay0.{i}(nr=1000).txt')*stoday)
+    Timedelay[2][p] = sorted(np.loadtxt(f'Timedelay0.{i}(nr=1500).txt')*stoday)
+    Timedelay[3][p] = sorted(np.loadtxt(f'Timedelay0.{i}(nr=2000).txt')*stoday)
+    Timedelay[4][p] = sorted(np.loadtxt(f'Timedelay0.{i}(nr=2238).txt')*stoday)
+    p +=1        
+
+    
 u = np.linspace(-rmax,rmax,res)
 X,Y = np.meshgrid(u,u)
 stoday = 3600*24 #s/day
@@ -43,11 +58,7 @@ pot = np.loadtxt('potential2_120(nr=2238).txt')
 
 
 index = np.array([7]) #index = np.array([3,7]) =[]
-Timedelay5 = []
-Timedelay6 = []
-Timedelay7 = []
-Timedelay8 = []
-
+Hubble =[]
 
 factor = 2 #2 for 700 #29 for 1000 #2 for 2000 #2 for 1500 #13 for 2238
 resfine = res*factor
@@ -108,6 +119,7 @@ for i in range(0,len(zL)):
     loc_max = []
     loc_sadd = []
     extremum = []
+    timedelay = []
     for ix in range(1, 40*factor-1):
         for iy in range(1, 40*factor-1):
             if tau[ix, iy] < tau[ix, iy + 1] and tau[ix, iy] < tau[ix, iy - 1] and \
@@ -148,27 +160,28 @@ for i in range(0,len(zL)):
                tau[ix, iy] < tau[ix - 1, iy - 1] and tau[ix, iy] > tau[ix - 1, iy + 1]:
                loc_sadd.append((ix, iy))
                extremum.append((ix,iy))    
-    extremum = list(set(extremum))
-    np.savetxt(f'extremum2238{i}.txt',extremum)
+    extremum = sorted(list(set(extremum)))
     loc_sadd = list(set(loc_sadd))
     print('minima:',loc_min,'maxima:',loc_max,'saddle:',loc_sadd)  
     
     for kik in range (0,len(extremum)):
         y1[kik] = int(extremum[kik][0])
         x1[kik] = int(extremum[kik][1])
+    hah = 0
     for m in range (0,len(extremum)):
         plt.plot(Xfine[0,int(x1[m])],Yfine[int(y1[m]),0],'r+',markersize = 3)
-        #print(tau[int(y1[m])-1:int(y1[m]+2),int(x1[m])-1:int(x1[m])+2])
         for n in range(m+1,len(extremum)):
-            timedelay = np.abs(tau[int(y1[m]),int(x1[m])]-tau[int(y1[n]),int(x1[n])])    
-            if aL[i] == 0.5:         
-                    Timedelay5.append(timedelay)                
-            if aL[i] == 0.6:
-                    Timedelay6.append(timedelay)                      
-            if aL[i] == 0.7:
-                    Timedelay7.append(timedelay)            
-            if aL[i] == 0.8:
-                    Timedelay8.append(timedelay)
+            timedelay.append(p.abs(tau[int(y1[m]),int(x1[m])]-tau[int(y1[n]),int(x1[n])]))
+    for m in range (0,len(extremum)):
+        plt.plot(Xfine[0,int(x1[m])],Yfine[int(y1[m]),0],'r+',markersize = 3)
+        for n in range(m+1,len(extremum)):
+            timedelay = np.abs(tau[int(y1[m]),int(x1[m])]-tau[int(y1[n]),int(x1[n])])
+            timedelay2 = Timedelay[4][i][hah]
+            print(timedelay2,timedelay)
+            H = timedelay/timedelay2
+            print(H)
+            Hubble.append(H)
+            hah += 1
 
 
     cs = plt.gca().set_aspect('equal')
@@ -182,22 +195,13 @@ for i in range(0,len(zL)):
     plt.pause(0.1)
     plt.clf()
 
-Timedelay5 = sorted(list(set(Timedelay5)))
-Timedelay6 = sorted(list(set(Timedelay6)))
-Timedelay7 = sorted(list(set(Timedelay7)))
-Timedelay8 = sorted(list(set(Timedelay8)))
-   
-Timedelay5 = np.asarray(Timedelay5)/stoday
-Timedelay6 = np.asarray(Timedelay6)/stoday
-Timedelay7 = np.asarray(Timedelay7)/stoday
-Timedelay8 = np.asarray(Timedelay8)/stoday
-#np.savetxt('Timedelay0.5(nr=700).txt',Timedelay5)
-#np.savetxt('Timedelay0.6(nr=700).txt',Timedelay6)
-#np.savetxt('Timedelay0.7(nr=700).txt',Timedelay7)
-#np.savetxt('Timedelay0.8(nr=700).txt',Timedelay8)
-print(Timedelay5,Timedelay6,Timedelay7,Timedelay8)
 
+HubbleA = np.asarray(Hubble)
+plt.figure()
+plt.title('Hubble Parameter in ')
+plt.grid()
+plt.hist(HubbleA,bins=len(HubbleA),rwidth = 0.6)
+#plt.savefig('HubbleParameter.png')
+plt.show()
+#np.savetxt('HubbleBessel(nr=2238).txt', HubbleA)
 
-df = pd.DataFrame(dict(aL5=Timedelay5,aL6=Timedelay6,aL7=Timedelay7,aL8 = Timedelay8))
-
-print(df.to_latex(index=False))  

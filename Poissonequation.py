@@ -19,7 +19,7 @@ r = np.sqrt(X**2+Y**2)
 phi = np.arctan2(Y,X)
 pot = 0
 fit = 0
-d = 8 
+d = 50 
 Dd = 1.495717907193709e+17
 dens = np.zeros((len(X),len(Y)),float) #kg/m^2
 
@@ -31,7 +31,7 @@ for i in range(0,23):
     dens[p1[i]][p2[i]] = d
 '''
 
-dens = np.loadtxt('galaxy1.txt')
+dens = np.loadtxt('galaxy2.txt')
 
 levs = np.linspace(1,8,2) #for kappa == 1 surface
 lev = np.linspace(0,12,20)
@@ -75,36 +75,46 @@ for n in range(0,len(nr)): #coefficients of Fourier Bessel series
     fns = bess*np.sin(m*phi)
     Ba = area*np.sum(dens*fnc) #microrad^2*kg/m^2 (integral over pixel)
     Bb = area*np.sum(dens*fns)
+    '''plt.figure()
+    plt.gca().set_aspect('equal')
+    plt.title(f'm = {m},'r' $\alpha$' f'= {alpha}')
+    plt.contourf(X,Y,fnc,cmap='RdYlBu')
+    plt.xlabel('x in microradians')
+    plt.ylabel('y in microradians')
+    plt.savefig(f'FourierBesselBasis{n}')
+    plt.show()'''
     if m != 0:
         a[n] = Ba/N
         b[n] = Bb/N
     else: 
         a[n] = Ba/N0
         b[n] = Bb/N0
-noise = np.random.normal(0,np.mean(a)/10,len(a))
-a += noise
-b += noise
-
-res2 = 500
+        
+#noise = np.random.normal(0,np.mean(a)/1000,len(a))
+#a += noise
+#b += noise
+'''
+res2 = 120
 u = np.linspace(-rmax,rmax,res2)
 X,Y = np.meshgrid(u,u) 
 r = np.sqrt(X**2+Y**2) 
 phi = np.arctan2(Y,X)
 
+
+
 for i in range(0,len(nr)): #Fourier Bessel series with coefficients
-    print(i)
     m = nr[i]
     alpha = root[i]
     angpart = a[i]*np.cos(m*phi)
     if m > 0:
         angpart += b[i]*np.sin(m*phi)
     pot += 2*(rmax/alpha)**2*special.jv(m,alpha*r/rmax)*angpart #microrad**2*kg/m´2
-    #fit += special.jv(m,alpha*r/rmax)*angpart  #kg/m^2
+    fit += special.jv(m,alpha*r/rmax)*angpart  #kg/m^2
 
-np.savetxt('noisypotential1_10(4).txt',pot)
-#np.savetxt('fit1_500.txt',fit)
+#np.savetxt('potential2_2048.txt',pot)
+#np.savetxt('fit2_2048.txt',fit)
 
-'''
+
 plt.clf()
 plt.title('potential')
 plt.gca().set_aspect('equal')
@@ -115,9 +125,9 @@ plt.show()
 plt.clf()
 plt.title('galaxy cluster')
 plt.gca().set_aspect('equal')
-plt.contourf(X,Y,fit*invcritdens0,levels = lev, cmap='RdYlBu')
+plt.contourf(X,Y,fit*invcritdens0,cmap='RdYlBu')#levels = lev, 
 plt.colorbar()
-plt.contour(X,Y,fit*invcritdens0,levels=levs,cmap='gist_gray',linewidths=0.75)
+plt.contour(X,Y,fit*invcritdens0,cmap='gist_gray',linewidths=0.75)#levels = lev, 
 plt.xlabel('x in microradians')
 plt.ylabel('y in microradians')
 plt.show()
@@ -139,12 +149,11 @@ for i in range(0,len(nr)):
     alpha = root[i] #microrad
     rgrad += 2*(rmax/alpha)**2*(b[i]*np.sin(m*phi)+a[i]*np.cos(m*phi))*(alpha/rmax)*special.jvp(m,r*alpha/rmax,n=1)
     phigrad += 2*(rmax/alpha)**2*(b[i]*m*np.cos(m*phi)-a[i]*m*np.sin(m*phi))*special.jv(m,r*alpha/rmax)/r
-    print(i,'von',len(nr))
 Xgrad = rgrad*X/r-phigrad*Y/r #microradian*kg/m^2
 Ygrad = rgrad*Y/r+phigrad*X/r
 
-np.savetxt('noisyXgrad2_500(1/100).txt', Xgrad)
-np.savetxt('noisyYgrad2_500(1/100).txt', Ygrad)
+#np.savetxt('Xgrad2_2048.txt', Xgrad)
+#np.savetxt('Ygrad2_2048.txt', Ygrad)
 
 plt.contour(X,Y,Xgrad)
 plt.title('Xgrad')

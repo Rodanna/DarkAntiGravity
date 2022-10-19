@@ -9,7 +9,7 @@ import numpy as np
 c = 299792458 # m/s
 pc = 1/np.tan(4.848*10**(-6))*1.495978707*10**11/c # cs
 Mpc = pc*1e6 # cs
-H0 = 69.32/Mpc*1000/c # 1/s 
+H0 = 67.6/Mpc*1000/c # 1/s 
 Om = 0.3089
 OL = 0.6911
 Orad = 1e-4
