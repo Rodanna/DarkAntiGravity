@@ -28,7 +28,7 @@ def bisection(x,v,tol):
         return bisection(x[0:y],v,tol) # m closer than b
 
 rmax = 150 #microradians
-res = 250
+res = 1000 #250
 invcritdens0 = 0.49823288405658067 #(kg/m^2)^-1
 
 u = np.linspace(-rmax,rmax,res)
@@ -119,12 +119,7 @@ np.savetxt('roots.txt', lyst, fmt="%.3f", header="nr  root")
 k = [v[0] for v in lyst]
 xr = [v[1] for v in lyst]
 plt.plot(k,xr,'.')
+plt.xlabel('Number of Bessel funtion')
+plt.ylabel('r in microradians')
+plt.savefig('Besselzeros.pdf')
 plt.show()
-
-
-for n in range(0,16): #coefficients of Fourier Bessel series
-    bess = special.jv(n,radius) #alpha/rmax*r
-    fnc = bess*np.cos(m*phi)
-    plt.figure()
-    plt.plot(x,fnc)
-    plt.show()

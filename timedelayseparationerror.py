@@ -67,15 +67,14 @@ titles = [700,1000,1500,2000]
 for i in range (0,4):
     timemedian[i] = TimeError[i][20]
     plt.figure()
-    plt.title(f'Error in time delay for nr = {titles[i]}')
     plt.grid()
     plt.hist(TimeError[i],bins = 100,rwidth = 0.6)
     plt.vlines(timemedian[i],0,7,'r',linestyles='dotted')
     plt.vlines(TimeError[i][int(len(TimeError[i])*0.16)],0,7,'r',linestyles='dotted')
     plt.vlines(TimeError[i][int(len(TimeError[i])*0.84)],0,7,'r',linestyles='dotted')
-    plt.xlabel('Normalized error in Time Delay')
-    plt.ylabel('Number Count')
-    plt.savefig(f'ErrorInTimedelay{i}.png')
+    plt.xlabel('Normalized error in time delay')
+    plt.ylabel('Number count')
+    plt.savefig(f'ErrorInTimedelay{i}.pdf')
     plt.show()
 
 for i in range (0,4):

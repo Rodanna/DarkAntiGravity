@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 from scipy import special
 
 rmax = 150 #microradians
-res = 120
+res =  120 #250
 invcritdens0 = 0.49823288405658067 #(kg/m^2)^-1
 
 u = np.linspace(-rmax,rmax,res)
@@ -29,21 +29,22 @@ p1 = np.array([94,96,99,212,180,150,110,120,150,89,3,120,130,98,130,167,29,130,1
 p2 = np.array([116,69,230,144,230,120,120,155,90,5,90,170,160,78,129,130,180,67,130,110,120,70,189,10,110,167])
 for i in range(0,23):
     dens[p1[i]][p2[i]] = d
+    
 '''
+dens = np.loadtxt('galaxy1.txt')
 
-dens = np.loadtxt('galaxy2.txt')
 
 levs = np.linspace(1,8,2) #for kappa == 1 surface
 lev = np.linspace(0,12,20)
            
 plt.clf()
-plt.title('galaxy cluster')
 plt.gca().set_aspect('equal')
 plt.contourf(X,Y,dens*invcritdens0,levels = lev, cmap='RdYlBu')
 plt.colorbar()
 plt.contour(X,Y,dens*invcritdens0,levels=levs,cmap='gist_gray',linewidths=0.75)
 plt.xlabel('x in microradians')
 plt.ylabel('y in microradians')
+plt.savefig('distribution1.pdf')
 plt.show()
 
 fig = plt.figure()
@@ -51,7 +52,7 @@ ax = plt.axes(projection='3d')
 ax.plot_surface(X, Y, dens*invcritdens0, rstride=1, cstride=1,cmap='RdYlBu', edgecolor='none')
 ax.set_xlabel('x in microradians')
 ax.set_ylabel('y in microradians')
-ax.set_zlabel('convergence')
+plt.savefig('3dmassdistribution1.pdf')
 plt.show()
 
 nr, root = np.loadtxt('roots.txt', unpack=True) #import bessel roots
@@ -75,13 +76,15 @@ for n in range(0,len(nr)): #coefficients of Fourier Bessel series
     fns = bess*np.sin(m*phi)
     Ba = area*np.sum(dens*fnc) #microrad^2*kg/m^2 (integral over pixel)
     Bb = area*np.sum(dens*fns)
-    '''plt.figure()
-    plt.gca().set_aspect('equal')
+    '''
+    plt.figure() #print basis functions
+    cs = plt.gca().set_aspect('equal')
     plt.title(f'm = {m},'r' $\alpha$' f'= {alpha}')
     plt.contourf(X,Y,fnc,cmap='RdYlBu')
+    plt.colorbar(cs)
     plt.xlabel('x in microradians')
     plt.ylabel('y in microradians')
-    plt.savefig(f'FourierBesselBasis{n}')
+    plt.savefig(f'FourierBesselBasis{n}.pdf')
     plt.show()'''
     if m != 0:
         a[n] = Ba/N
@@ -89,12 +92,14 @@ for n in range(0,len(nr)): #coefficients of Fourier Bessel series
     else: 
         a[n] = Ba/N0
         b[n] = Bb/N0
-        
+
+'''print('median:',np.median(a),np.median(b)) #add noise to reconstruction
+print('mean:',np.mean(a),np.median(b))        
 #noise = np.random.normal(0,np.mean(a)/1000,len(a))
-#a += noise
-#b += noise
-'''
-res2 = 120
+a += noise
+b += noise'''
+
+res2 = 250
 u = np.linspace(-rmax,rmax,res2)
 X,Y = np.meshgrid(u,u) 
 r = np.sqrt(X**2+Y**2) 
@@ -116,20 +121,22 @@ for i in range(0,len(nr)): #Fourier Bessel series with coefficients
 
 
 plt.clf()
-plt.title('potential')
 plt.gca().set_aspect('equal')
 plt.contourf(X,Y,pot,cmap='RdYlBu')
 plt.colorbar()
+plt.xlabel('x in microradians')
+plt.ylabel('y in microradians')
+plt.savefig('potential1.pdf')
 plt.show()
 
 plt.clf()
-plt.title('galaxy cluster')
 plt.gca().set_aspect('equal')
-plt.contourf(X,Y,fit*invcritdens0,cmap='RdYlBu')#levels = lev, 
+plt.contourf(X,Y,fit*invcritdens0,levels = lev, cmap='RdYlBu')
 plt.colorbar()
-plt.contour(X,Y,fit*invcritdens0,cmap='gist_gray',linewidths=0.75)#levels = lev, 
+plt.contour(X,Y,fit*invcritdens0,levels=levs,cmap='gist_gray',linewidths=0.75)
 plt.xlabel('x in microradians')
 plt.ylabel('y in microradians')
+plt.savefig('reconstruction1.pdf')
 plt.show()
 
 fig = plt.figure()
@@ -137,7 +144,7 @@ ax = plt.axes(projection='3d')
 ax.plot_surface(X, Y, fit*invcritdens0, rstride=1, cstride=1,cmap='RdYlBu', edgecolor='none')
 ax.set_xlabel('x in microradians')
 ax.set_ylabel('y in microradians')
-ax.set_zlabel('convergence')
+plt.savefig('reconstructed3ddistribution1.pdf')
 plt.show()
 
 
@@ -157,12 +164,18 @@ Ygrad = rgrad*Y/r+phigrad*X/r
 
 plt.contour(X,Y,Xgrad)
 plt.title('Xgrad')
+plt.xlabel('x in microradians')
+plt.ylabel('y in microradians')
 plt.show()
 plt.contour(X,Y,Ygrad)
 plt.title('Ygrad')
+plt.xlabel('x in microradians')
+plt.ylabel('y in microradians')
 plt.show()
 
 plt.figure()
 plt.gca().set_aspect('equal')
 plt.quiver(X[::5,::5],Y[::5,::5],Xgrad[::5,::5],Ygrad[::5,::5])
-plt.show()'''
+plt.xlabel('x in microradians')
+plt.ylabel('y in microradians')
+plt.show()
