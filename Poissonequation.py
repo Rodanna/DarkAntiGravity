@@ -76,11 +76,17 @@ for n in range(0,len(nr)): #coefficients of Fourier Bessel series
     fns = bess*np.sin(m*phi)
     Ba = area*np.sum(dens*fnc) #microrad^2*kg/m^2 (integral over pixel)
     Bb = area*np.sum(dens*fns)
-    '''
+    '''for i in range(0,len(X)):
+        for j in range(0,len(Y)):
+            mi = int(res/2) - i
+            mj = int(res/2) - j
+            if np.sqrt(mi**2+mj**2) >= 60:
+                fnc[i][j] = 0
+                
     plt.figure() #print basis functions
     cs = plt.gca().set_aspect('equal')
     plt.title(f'm = {m},'r' $\alpha$' f'= {alpha}')
-    plt.contourf(X,Y,fnc,cmap='RdYlBu')
+    plt.contourf(X,Y,fnc,cmap='Reds') #RdYlBu
     plt.colorbar(cs)
     plt.xlabel('x in microradians')
     plt.ylabel('y in microradians')
@@ -126,7 +132,7 @@ plt.contourf(X,Y,pot,cmap='RdYlBu')
 plt.colorbar()
 plt.xlabel('x in microradians')
 plt.ylabel('y in microradians')
-plt.savefig('potential1.pdf')
+#plt.savefig('potential1.pdf')
 plt.show()
 
 plt.clf()
@@ -136,7 +142,7 @@ plt.colorbar()
 plt.contour(X,Y,fit*invcritdens0,levels=levs,cmap='gist_gray',linewidths=0.75)
 plt.xlabel('x in microradians')
 plt.ylabel('y in microradians')
-plt.savefig('reconstruction1.pdf')
+#plt.savefig('reconstruction1.pdf')
 plt.show()
 
 fig = plt.figure()
@@ -144,7 +150,7 @@ ax = plt.axes(projection='3d')
 ax.plot_surface(X, Y, fit*invcritdens0, rstride=1, cstride=1,cmap='RdYlBu', edgecolor='none')
 ax.set_xlabel('x in microradians')
 ax.set_ylabel('y in microradians')
-plt.savefig('reconstructed3ddistribution1.pdf')
+#plt.savefig('reconstructed3ddistribution1.pdf')
 plt.show()
 
 

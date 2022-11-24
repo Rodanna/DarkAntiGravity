@@ -29,8 +29,8 @@ phi = np.arctan2(Y,X)
 lev = np.linspace(0,0.3,20)
 levs = np.linspace(1,8,2)
 
-galaxy = np.loadtxt('galaxy2.txt')*invcritdens0 
-potential = np.loadtxt('potential2_120(nr=2238).txt')*invcritdens0         
+galaxy = np.loadtxt('galaxy1.txt')*invcritdens0 
+potential = np.loadtxt('potential1_120(nr=2238).txt')*invcritdens0         
 kappa = np.zeros((43,120,120))
 pot = np.zeros((43,120,120))
 
@@ -39,8 +39,8 @@ errorpot = np.zeros((43,120,120))
 
 
 for i in range (0,43):
-    kappa[i,:,:] = np.loadtxt(f'fit2_120(nr={(i+1)*50}).txt')*invcritdens0
-    pot[i,:,:] = np.loadtxt(f'potential2_120(nr={(i+1)*50}).txt')*invcritdens0
+    kappa[i,:,:] = np.loadtxt(f'fit1_120(nr={(i+1)*50}).txt')*invcritdens0
+    pot[i,:,:] = np.loadtxt(f'potential1_120(nr={(i+1)*50}).txt')*invcritdens0
     errorkappa[i,:,:] = kappa[i,:,:] - galaxy
     errorpot[i,:,:] = pot[i,:,:] - potential
     #errorpot[i,:,:] = pot[i,:,:] - np.mean(pot[i,:,:]) 
@@ -64,7 +64,7 @@ for i in range (0,43):
     plt.contour(X,Y,galaxy,levels=levs,cmap='gist_gray',linewidths=0.5)
     plt.xlabel('x in microradians')
     plt.ylabel('y in microradians')
-    plt.savefig(f'2total{(i+1)*50}.pdf')
+    plt.savefig(f'1total{(i+1)*50}.pdf')
     plt.show()
     meankappa[i] = np.mean(np.abs(kappa[i,:,:]))
     errorkappa1d[i] = np.mean(np.abs(errorkappa[i,:,:]))
@@ -81,7 +81,7 @@ for i in range (0,43):
     plt.contour(X,Y,galaxy,levels=levs,cmap='gist_gray',linewidths=0.5)
     plt.xlabel('x in microradians')
     plt.ylabel('y in microradians')
-    plt.savefig(f'2potential{(i+1)*50}.pdf')
+    plt.savefig(f'1potential{(i+1)*50}.pdf')
     plt.show()
     meanpot[i] = np.mean(np.abs(pot[i,:,:]))
     errorpot1d[i] = np.mean(np.abs(errorpot[i,:,:]))
@@ -102,7 +102,7 @@ axs[0].label_outer()
 axs[0].grid(True)
 axs[0].legend()
 plt.xlabel('number of Bessel roots')
-plt.savefig('2Meanmasserror.pdf')
+plt.savefig('1Meanmasserror.pdf')
 plt.show()
 
 fig, axs = plt.subplots(2)
@@ -116,7 +116,7 @@ axs[0].label_outer()
 axs[0].grid(True)
 axs[0].legend()
 plt.xlabel('number of Bessel roots')
-plt.savefig('2RMSmasserror.pdf')
+plt.savefig('1RMSmasserror.pdf')
 plt.show()
 
 fig, axs = plt.subplots(2)
@@ -130,7 +130,7 @@ axs[0].label_outer()
 axs[0].grid(True)
 axs[0].legend()
 plt.xlabel('number of Bessel roots')
-plt.savefig('2Meanpotentialerror.pdf')
+plt.savefig('1Meanpotentialerror.pdf')
 plt.show()
 
 fig, axs = plt.subplots(2)
@@ -144,7 +144,7 @@ axs[1].label_outer()
 axs[1].grid(True)
 axs[1].legend()
 plt.xlabel('number of Bessel roots')
-plt.savefig('2RMSpotentialerror.pdf')
+plt.savefig('1RMSpotentialerror.pdf')
 plt.show()
 
 
@@ -157,7 +157,7 @@ for i in range (0,43):
     plt.contour(X,Y,galaxy,levels=levs,cmap='gist_gray',linewidths=0.5)
     plt.xlabel('x in microradians')
     plt.ylabel('y in microradians')
-    plt.savefig(f'2fractional{(i+1)*50}.pdf')
+    plt.savefig(f'1fractional{(i+1)*50}.pdf')
     plt.show()
 
 
@@ -168,8 +168,7 @@ for i in numbers:
     err = (foo(errorkappa[i,:,:],galaxy)).flatten()
     #plt.title('Fractional mass difference in dependence of number of Bessel roots')
     plt.hist(err,bins = 100,histtype='step',label=f'nr = {(i+1)*50}')
-plt.xlabel('Fractional Mass Error')
-plt.ylabel('Count')
+plt.xlabel('$\Delta$m/m')
 plt.legend()
-plt.savefig('Fractionalmasserrorcount2.pdf')
+plt.savefig('Fractionalmasserrorcount1.pdf')
 plt.show()
