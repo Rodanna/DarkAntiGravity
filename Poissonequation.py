@@ -44,7 +44,7 @@ plt.colorbar()
 plt.contour(X,Y,dens*invcritdens0,levels=levs,cmap='gist_gray',linewidths=0.75)
 plt.xlabel('x in microradians')
 plt.ylabel('y in microradians')
-plt.savefig('distribution1.pdf')
+#plt.savefig('distribution1.pdf')
 plt.show()
 
 fig = plt.figure()
@@ -52,7 +52,7 @@ ax = plt.axes(projection='3d')
 ax.plot_surface(X, Y, dens*invcritdens0, rstride=1, cstride=1,cmap='RdYlBu', edgecolor='none')
 ax.set_xlabel('x in microradians')
 ax.set_ylabel('y in microradians')
-plt.savefig('3dmassdistribution1.pdf')
+#plt.savefig('3dmassdistribution1.pdf')
 plt.show()
 
 nr, root = np.loadtxt('roots.txt', unpack=True) #import bessel roots
@@ -99,11 +99,13 @@ for n in range(0,len(nr)): #coefficients of Fourier Bessel series
         a[n] = Ba/N0
         b[n] = Bb/N0
 
-'''print('median:',np.median(a),np.median(b)) #add noise to reconstruction
+'''
+print('median:',np.median(a),np.median(b)) #add noise to reconstruction
 print('mean:',np.mean(a),np.median(b))        
-#noise = np.random.normal(0,np.mean(a)/1000,len(a))
+noise = np.random.normal(0,np.mean(a)/1000,len(a))
 a += noise
-b += noise'''
+b += noise
+'''
 
 res2 = 250
 u = np.linspace(-rmax,rmax,res2)
